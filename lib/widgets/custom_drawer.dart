@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:study_platform/helper/storage_service.dart';
 import 'package:study_platform/views/Drawer_views/account_view.dart';
 import 'package:study_platform/views/Drawer_views/settings_view.dart';
 import 'package:study_platform/views/register_view.dart';
@@ -42,14 +43,22 @@ class CustomDrawer extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.logout),
             title: const Text('تسجيل الخروج'),
-            onTap: () {
+            onTap: () async {
+              // مسح البيانات
+              await StorageService().logout();
+
+              // اقفل الـ Drawer
+              Navigator.of(context).pop();
+
+              // روح على شاشة اللوجين
               Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(builder: (context) => const RegisterView()),
-                (route) => false, // false = ميخليش أي صفحة قديمة
+                (route) => false,
               );
             },
           ),
+
         ],
       ),
     );
