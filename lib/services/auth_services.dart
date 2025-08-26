@@ -1,12 +1,13 @@
 import 'package:study_platform/helper/api.dart';
 import 'package:study_platform/helper/api_constants.dart';
-import 'package:study_platform/models/login_model.dart';
-import 'package:study_platform/models/register_model.dart';
+import 'package:study_platform/models/authentication/auth_response_model.dart';
+import 'package:study_platform/models/authentication/login_model.dart';
+import 'package:study_platform/models/authentication/register_model.dart';
 
 final Api _api = Api();
 
 class RegisterService {
-  Future<dynamic> register(RegisterModel model) async {
+  Future<AuthResponseModel> register(RegisterModel model) async {
     try {
       final response = await _api.post(
         url: ApiConstants.register,
@@ -15,12 +16,13 @@ class RegisterService {
       );
 
       print('Response from API: $response');
+      return AuthResponseModel.fromJson(response);
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<dynamic> confirmEmail(String otp) async {
+  Future<AuthResponseModel> confirmEmail(String otp) async {
     try {
       final response = await _api.post(
         url: "${ApiConstants.verifyEmail}/$otp/",
@@ -29,6 +31,7 @@ class RegisterService {
       );
 
       print('Response from API: $response');
+      return AuthResponseModel.fromJson(response);
     } catch (e) {
       rethrow;
     }
@@ -36,7 +39,7 @@ class RegisterService {
 }
 
 class LoginService {
-  Future<dynamic> login(LoginModel model) async {
+  Future<AuthResponseModel> login(LoginModel model) async {
     try {
       final response = await _api.post(
         url: ApiConstants.login,
@@ -45,6 +48,7 @@ class LoginService {
       );
 
       print('Response from API: $response');
+      return AuthResponseModel.fromJson(response);
     } catch (e) {
       rethrow;
     }

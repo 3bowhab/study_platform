@@ -1,17 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:study_platform/helper/storage_service.dart';
+import 'package:study_platform/views/home_view.dart';
 import 'package:study_platform/views/register_view.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final loggedIn = await StorageService().isLoggedIn();
+
+  runApp(MyApp(loggedIn: loggedIn));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final bool loggedIn;
+  const MyApp({super.key, required this.loggedIn});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: RegisterView(),
+      title: 'Study Platform',
+      home: loggedIn ? const HomeView() : const RegisterView(),
     );
   }
 }

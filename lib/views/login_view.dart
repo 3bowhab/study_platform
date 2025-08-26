@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:study_platform/helper/storage_service.dart';
 import 'package:study_platform/helper/validators.dart';
-import 'package:study_platform/models/login_model.dart';
+import 'package:study_platform/models/authentication/login_model.dart';
 import 'package:study_platform/services/auth_services.dart';
 import 'package:study_platform/views/home_view.dart';
 import 'package:study_platform/views/register_view.dart';
@@ -108,6 +109,10 @@ class _LoginViewState extends State<LoginView> {
             usernameOrEmail: usernameOrEmail!,
             password: _passwordController.text.trim(),
           );
+
+          // // ✨ احفظ التوكن
+          // final token = response["token"]; // تأكد من شكل الريسبونس بتاعك
+          // await StorageService().saveToken(token);
 
           setState(() {
             isLoading = true; // ⏳ يبدأ اللودينج

@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:study_platform/helper/validators.dart';
-import 'package:study_platform/models/register_model.dart';
+import 'package:study_platform/models/authentication/register_model.dart';
 import 'package:study_platform/services/auth_services.dart';
 import 'package:study_platform/views/confirm_email_view.dart';
 import 'package:study_platform/views/login_view.dart';
