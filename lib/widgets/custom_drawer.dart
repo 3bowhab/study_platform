@@ -13,13 +13,7 @@ class CustomDrawer extends StatelessWidget {
       child: ListView(
         padding: EdgeInsets.zero, // يخلي العناصر تبدأ من فوق
         children: [
-          const DrawerHeader(
-            decoration: BoxDecoration(color: Colors.blue),
-            child: Text(
-              'القائمة',
-              style: TextStyle(color: Colors.white, fontSize: 24),
-            ),
-          ),
+          customDrawerHeader(),
           ListTile(
             leading: const Icon(Icons.settings),
             title: const Text('الإعدادات'),
@@ -62,5 +56,43 @@ class CustomDrawer extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  DrawerHeader customDrawerHeader() {
+    return DrawerHeader(
+          decoration: BoxDecoration(color: Colors.blue),
+          child: FutureBuilder(
+            future: Future.wait([
+              StorageService().getFullName(),
+              StorageService().getEmail(),
+            ]),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const CircularProgressIndicator(color: Colors.white);
+              }
+              final fullName = snapshot.data?[0] ?? "Guest";
+              final email = snapshot.data?[1] ?? "No Email";
+
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    fullName,
+                    style: const TextStyle(color: Colors.white, fontSize: 20),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    email,
+                    style: const TextStyle(
+                      color: Colors.white70,
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+        );
   }
 }

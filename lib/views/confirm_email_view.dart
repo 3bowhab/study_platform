@@ -74,6 +74,8 @@ class _ConfirmEmailViewState extends State<ConfirmEmailView> {
              await StorageService().saveTokens(
               response.tokens.access,
               response.tokens.refresh,
+              response.user.fullName,
+              response.user.email,
             );
 
             setState(() {

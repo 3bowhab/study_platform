@@ -4,12 +4,16 @@ class StorageService {
   static const String _keyAccessToken = "access_token";
   static const String _keyRefreshToken = "refresh_token";
   static const String _keyIsLoggedIn = "isLoggedIn";
+  static const String _keyFullName = "full_name";
+  static const String _keyEmail = "email";
 
   /// حفظ التوكنات
-  Future<void> saveTokens(String access, String refresh) async {
+  Future<void> saveTokens(String access, String refresh, String fullName, String email) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_keyAccessToken, access);
     await prefs.setString(_keyRefreshToken, refresh);
+    await prefs.setString(_keyFullName, fullName);
+    await prefs.setString(_keyEmail, email);
     await prefs.setBool(_keyIsLoggedIn, true);
   }
 
@@ -36,6 +40,20 @@ class StorageService {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_keyAccessToken);
     await prefs.remove(_keyRefreshToken);
+    await prefs.remove(_keyFullName);
+    await prefs.remove(_keyEmail);
     await prefs.setBool(_keyIsLoggedIn, false);
+  }
+
+  /// قراءة الاسم الكامل
+  Future<String?> getFullName() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_keyFullName);
+  }
+
+  /// قراءة البريد الإلكتروني 
+  Future<String?> getEmail() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_keyEmail);
   }
 }
