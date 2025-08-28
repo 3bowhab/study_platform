@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:study_platform/services/auth_services.dart';
 // ignore_for_file: avoid_print
 
 class Api {
@@ -40,7 +41,7 @@ class Api {
     }
   }
 
-  Future<dynamic> post({
+Future<dynamic> post({
     required String url,
     required dynamic body,
     required String? token,
@@ -74,33 +75,39 @@ class Api {
         print('❌ DioException status: ${e.response?.statusCode}');
         print('❌ DioException headers: ${e.response?.headers}');
         print('❌ DioException data: ${e.response?.data}');
-       final data = e.response?.data;
+        final data = e.response?.data;
+
+        // 🟢 هنا بقى: لو التوكين انتهى (401) نجرب نعمل Refresh
+        if (e.response?.statusCode == 401) {
+          print("⚠️ Access token expired, trying refresh...");
+
+          final newToken = await RefreshTokenService().refreshAccessToken();
+          if (newToken != null) {
+            // نعيد نفس الريكوست بالتوكين الجديد
+            return await post(url: url, body: body, token: newToken);
+          }
+        }
 
         if (data is Map) {
           final List<String> errors = [];
 
           data.forEach((key, value) {
             if (value is List) {
-              // لو السيرفر رجّع ليستة
               errors.addAll(value.map((e) => e.toString()));
             } else {
-              // لو السيرفر رجّع سترنج عادي
               errors.add(value.toString());
             }
           });
 
-          // نطبع الأخطاء
           for (var msg in errors) {
             print("❌ $msg");
           }
 
-          // نعمل سترنج واحد للـ UI
           final allErrors = errors.join("\n");
           throw allErrors;
         } else {
           throw data.toString();
         }
-
       } else {
         throw e.message ?? "Unknown Dio error";
       }
@@ -109,6 +116,7 @@ class Api {
       throw Exception("Unexpected Error: $e");
     }
   }
+
 
   Future<dynamic> put({
     required String url,

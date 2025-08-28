@@ -1,27 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:study_platform/helper/storage_service.dart';
 import 'package:study_platform/helper/validators.dart';
-import 'package:study_platform/models/authentication/auth_response_model.dart';
-import 'package:study_platform/models/authentication/login_model.dart';
 import 'package:study_platform/services/auth_services.dart';
-import 'package:study_platform/views/home_view.dart';
-import 'package:study_platform/views/register_view.dart';
 import 'package:study_platform/widgets/custom_text_field.dart';
 import 'package:study_platform/widgets/loading_indecator.dart';
 
-class LoginView extends StatefulWidget {
-  const LoginView({super.key});
+class NewPasswordView extends StatefulWidget {
+  const NewPasswordView({super.key});
 
   @override
-  State<LoginView> createState() => _LoginViewState();
+  State<NewPasswordView> createState() => _NewPasswordViewState();
 }
 
-class _LoginViewState extends State<LoginView> {
+class _NewPasswordViewState extends State<NewPasswordView> {
   final formkey = GlobalKey<FormState>();
   AutovalidateMode autovalidateMode = AutovalidateMode.disabled;
 
+  String? otp;
   final TextEditingController _passwordController = TextEditingController();
-  String? usernameOrEmail;
+  final TextEditingController _confirmController = TextEditingController();
+  PasswordResetConfirmService passwordResetConfirmService = PasswordResetConfirmService();
 
   bool isLoading = false;
 
@@ -34,7 +31,7 @@ class _LoginViewState extends State<LoginView> {
             FocusScope.of(context).unfocus();
           },
           child: Scaffold(
-            appBar: AppBar(title: const Text('Login')),
+            appBar: AppBar(title: const Text('كلمة مرور جديدة')),
             body: Form(
               key: formkey,
               autovalidateMode: autovalidateMode,
@@ -42,26 +39,35 @@ class _LoginViewState extends State<LoginView> {
                 padding: const EdgeInsets.all(16.0),
                 children: [
                   CustomTextField(
-                    labelText: "Username or Email",
+                    labelText: 'OTP',
                     validator: AppValidators.requiredField,
                     onsaved: (newValue) {
-                      usernameOrEmail = newValue;
+                      otp = newValue;
                     },
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   CustomTextField(
                     labelText: 'Password',
                     controller: _passwordController,
                     validator: AppValidators.passwordValidator,
                     obscureText: true,
                   ),
+                  const SizedBox(height: 16),
+                  CustomTextField(
+                    labelText: 'Confirm Password',
+                    controller: _confirmController,
+                    obscureText: true,
+                    validator:
+                      (value) => AppValidators.confirmPasswordValidator(
+                        value,
+                        _passwordController.text,
+                      ),
+                  ),
                   const SizedBox(height: 20),
-                  loginButton(context),
-                  const SizedBox(height: 20),
-                  goToRegisterView(context),
+                  submitButton(context),
                 ],
               ),
-            )
+            ),
           ),
         ),
         if (isLoading) const LoadingIndicator(),
@@ -69,70 +75,36 @@ class _LoginViewState extends State<LoginView> {
     );
   }
 
-
-
-  Row goToRegisterView(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Text("Don't have an account?"),
-        TextButton(
-          onPressed: () {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const RegisterView()),
-            );
-          },
-          child: const Text("Register"),
-        ),
-      ],
-    );
-  }
-
-
-
-  ElevatedButton loginButton(BuildContext context) {
+  ElevatedButton submitButton(BuildContext context) {
     return ElevatedButton(
       onPressed: () async {
         if (formkey.currentState!.validate()) {
           formkey.currentState!.save();
 
-          // ✨ نكوّن الموديل
-          final loginModel = LoginModel(
-            usernameOrEmail: usernameOrEmail!,
-            password: _passwordController.text.trim(),
-          );
-
           setState(() {
             isLoading = true; // ⏳ يبدأ اللودينج
           });
 
+          await passwordResetConfirmService.confirmPasswordReset(
+            otp!,
+            _passwordController.text,
+            _confirmController.text,
+          );
+
           try {
             // ✨ ننده السيرفيس ونبعت الموديل.toJson()
-            AuthResponseModel response = await LoginService().login(loginModel);
-
-            await StorageService().saveTokens(
-              response.tokens.access,
-              response.tokens.refresh,
-              response.user.fullName,
-              response.user.email,
-            );
-
+            // AuthResponseModel response = await LoginService().login(loginModel);
             setState(() {
               isLoading = false; // ✅ وقف اللودينج
             });
 
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("✅ Login Successful")),
-            );
-
-            Navigator.pushAndRemoveUntil(
+            ScaffoldMessenger.of(
               context,
-              MaterialPageRoute(builder: (context) => const HomeView()),
-              (route) => false, // false = ميخليش أي صفحة قديمة
-            );
+            ).showSnackBar(const SnackBar(content: Text("✅ Password Reset Successful")));
 
-            print("Response: $response");
+            Navigator.pop(context);
+
+            // print("Response: $response");
           } catch (e) {
             setState(() {
               isLoading = false; // ❌ وقف اللودينج برضه
@@ -140,7 +112,7 @@ class _LoginViewState extends State<LoginView> {
 
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text("❌ Error: $e"),
+                content: Text(e.toString()),
                 duration: const Duration(seconds: 15),
               ),
             );
@@ -151,7 +123,7 @@ class _LoginViewState extends State<LoginView> {
           });
         }
       },
-      child: const Text("Login"),
+      child: const Text("تأكيد"),
     );
   }
 }

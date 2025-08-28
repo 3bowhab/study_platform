@@ -7,6 +7,7 @@ import 'package:study_platform/services/auth_services.dart';
 import 'package:study_platform/views/confirm_email_view.dart';
 import 'package:study_platform/views/login_view.dart';
 import 'package:study_platform/widgets/custom_text_field.dart';
+import 'package:study_platform/widgets/loading_indecator.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
@@ -102,16 +103,7 @@ class _RegisterViewState extends State<RegisterView> {
           ),
         ),
       ),
-
-       if (isLoading)
-            Container(
-              color: Colors.black.withValues(alpha: 0.5),
-              child: const Center(
-                child: CircularProgressIndicator(
-                  color: Colors.white,
-                ),
-              ),
-            ),
+      if (isLoading) const LoadingIndicator(),  
       ],
     );
   }

@@ -17,6 +17,15 @@ class StorageService {
     await prefs.setBool(_keyIsLoggedIn, true);
   }
 
+  Future<void> resetTokens(
+    String access,
+    String refresh,
+  ) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_keyAccessToken, access);
+    await prefs.setString(_keyRefreshToken, refresh);
+  }
+
   /// قراءة الـ Access Token
   Future<String?> getAccessToken() async {
     final prefs = await SharedPreferences.getInstance();

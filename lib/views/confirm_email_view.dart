@@ -5,6 +5,7 @@ import 'package:study_platform/models/authentication/auth_response_model.dart';
 import 'package:study_platform/services/auth_services.dart';
 import 'package:study_platform/views/home_view.dart';
 import 'package:study_platform/widgets/custom_text_field.dart';
+import 'package:study_platform/widgets/loading_indecator.dart';
 
 class ConfirmEmailView extends StatefulWidget {
   const ConfirmEmailView({super.key});
@@ -51,13 +52,7 @@ class _ConfirmEmailViewState extends State<ConfirmEmailView> {
             ),
           ),
         ),
-        if (isLoading)
-          Container(
-            color: Colors.black.withOpacity(0.5),
-            child: const Center(
-              child: CircularProgressIndicator(color: Colors.white),
-            ),
-          ),
+        if (isLoading) const LoadingIndicator(),
       ],
     );
   }
