@@ -85,15 +85,13 @@ class _NewPasswordViewState extends State<NewPasswordView> {
             isLoading = true; // ⏳ يبدأ اللودينج
           });
 
-          await passwordResetConfirmService.confirmPasswordReset(
-            otp!,
-            _passwordController.text,
-            _confirmController.text,
-          );
-
           try {
-            // ✨ ننده السيرفيس ونبعت الموديل.toJson()
-            // AuthResponseModel response = await LoginService().login(loginModel);
+            await passwordResetConfirmService.confirmPasswordReset(
+              otp!,
+              _passwordController.text,
+              _confirmController.text,
+            );
+
             setState(() {
               isLoading = false; // ✅ وقف اللودينج
             });

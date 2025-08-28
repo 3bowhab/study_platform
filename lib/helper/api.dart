@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:study_platform/services/auth_services.dart';
+
 // ignore_for_file: avoid_print
 
 class Api {
@@ -13,50 +14,51 @@ class Api {
         headers['Authorization'] = 'Bearer $token';
       }
 
-      print('📌 GET REQUEST');
-      print('URL: $url');
-      print('Headers: ${headers.toString()}');
+      print('📌 [GET REQUEST]');
+      print('➡️ URL: $url');
+      print('➡️ Headers: ${headers.toString()}');
 
       Response response = await dio.get(
         url,
         options: Options(headers: headers),
       );
 
-      print('✅ Response status: ${response.statusCode}');
-      print('✅ Response headers: ${response.headers}');
-      print('✅ Response data: ${response.data}');
+      print('✅ [GET SUCCESS] ${response.statusCode}');
+      print('📦 Data: ${response.data}');
 
       return response.data;
     } on DioException catch (e) {
-      print('❌ DioException: ${e.message}');
-      if (e.response != null) {
-        print('❌ DioException status: ${e.response?.statusCode}');
-        print('❌ DioException headers: ${e.response?.headers}');
-        print('❌ DioException data: ${e.response?.data}');
+      _handleDioError(e);
+
+      // 🟢 Refresh token retry
+      if (e.response?.statusCode == 401) {
+        final newToken = await RefreshTokenService().refreshAccessToken();
+        if (newToken != null) {
+          return await get(url: url, token: newToken);
+        }
       }
-      throw Exception("HTTP Error: ${e.response?.statusCode} - ${e.message}");
+      rethrow;
     } catch (e) {
-      print('❌ Unexpected Error: $e');
+      print('❌ [GET UNEXPECTED ERROR] $e');
       throw Exception("Unexpected Error: $e");
     }
   }
 
-Future<dynamic> post({
+  Future<dynamic> post({
     required String url,
     required dynamic body,
     required String? token,
   }) async {
     try {
       Map<String, String> headers = {'Content-Type': 'application/json'};
-
       if (token != null) {
         headers['Authorization'] = 'Bearer $token';
       }
 
-      print('📌 POST REQUEST');
-      print('URL: $url');
-      print('Headers: ${headers.toString()}');
-      print('Body: $body');
+      print('📌 [POST REQUEST]');
+      print('➡️ URL: $url');
+      print('➡️ Headers: ${headers.toString()}');
+      print('➡️ Body: $body');
 
       Response response = await dio.post(
         url,
@@ -64,59 +66,25 @@ Future<dynamic> post({
         options: Options(headers: headers),
       );
 
-      print('✅ Response status: ${response.statusCode}');
-      print('✅ Response headers: ${response.headers}');
-      print('✅ Response data: ${response.data}');
+      print('✅ [POST SUCCESS] ${response.statusCode}');
+      print('📦 Data: ${response.data}');
 
       return response.data;
     } on DioException catch (e) {
-      print('❌ DioException: ${e.message}');
-      if (e.response != null) {
-        print('❌ DioException status: ${e.response?.statusCode}');
-        print('❌ DioException headers: ${e.response?.headers}');
-        print('❌ DioException data: ${e.response?.data}');
-        final data = e.response?.data;
+      _handleDioError(e);
 
-        // 🟢 هنا بقى: لو التوكين انتهى (401) نجرب نعمل Refresh
-        if (e.response?.statusCode == 401) {
-          print("⚠️ Access token expired, trying refresh...");
-
-          final newToken = await RefreshTokenService().refreshAccessToken();
-          if (newToken != null) {
-            // نعيد نفس الريكوست بالتوكين الجديد
-            return await post(url: url, body: body, token: newToken);
-          }
+      if (e.response?.statusCode == 401) {
+        final newToken = await RefreshTokenService().refreshAccessToken();
+        if (newToken != null) {
+          return await post(url: url, body: body, token: newToken);
         }
-
-        if (data is Map) {
-          final List<String> errors = [];
-
-          data.forEach((key, value) {
-            if (value is List) {
-              errors.addAll(value.map((e) => e.toString()));
-            } else {
-              errors.add(value.toString());
-            }
-          });
-
-          for (var msg in errors) {
-            print("❌ $msg");
-          }
-
-          final allErrors = errors.join("\n");
-          throw allErrors;
-        } else {
-          throw data.toString();
-        }
-      } else {
-        throw e.message ?? "Unknown Dio error";
       }
+      rethrow;
     } catch (e) {
-      print('❌ Unexpected Error: $e');
+      print('❌ [POST UNEXPECTED ERROR] $e');
       throw Exception("Unexpected Error: $e");
     }
   }
-
 
   Future<dynamic> put({
     required String url,
@@ -129,10 +97,10 @@ Future<dynamic> post({
         headers['Authorization'] = 'Bearer $token';
       }
 
-      print('📌 PUT REQUEST');
-      print('URL: $url');
-      print('Headers: ${headers.toString()}');
-      print('Body: $body');
+      print('📌 [PUT REQUEST]');
+      print('➡️ URL: $url');
+      print('➡️ Headers: ${headers.toString()}');
+      print('➡️ Body: $body');
 
       Response response = await dio.put(
         url,
@@ -140,22 +108,22 @@ Future<dynamic> post({
         options: Options(headers: headers),
       );
 
-      print('✅ Response status: ${response.statusCode}');
-      print('✅ Response headers: ${response.headers}');
-      print('✅ Response data: ${response.data}');
+      print('✅ [PUT SUCCESS] ${response.statusCode}');
+      print('📦 Data: ${response.data}');
 
-      print('response: ${response.data}');
       return response.data;
     } on DioException catch (e) {
-      print('❌ DioException: ${e.message}');
-      if (e.response != null) {
-        print('❌ DioException status: ${e.response?.statusCode}');
-        print('❌ DioException headers: ${e.response?.headers}');
-        print('❌ DioException data: ${e.response?.data}');
+      _handleDioError(e);
+
+      if (e.response?.statusCode == 401) {
+        final newToken = await RefreshTokenService().refreshAccessToken();
+        if (newToken != null) {
+          return await put(url: url, body: body, token: newToken);
+        }
       }
-      throw Exception("HTTP Error: ${e.response?.statusCode} - ${e.response?.data}");
+      rethrow;
     } catch (e) {
-      print('❌ Unexpected Error: $e');
+      print('❌ [PUT UNEXPECTED ERROR] $e');
       throw Exception("Unexpected Error: $e");
     }
   }
@@ -172,10 +140,10 @@ Future<dynamic> post({
         headers['Authorization'] = 'Bearer $token';
       }
 
-      print('📌 POST MULTIPART REQUEST');
-      print('URL: $url');
-      print('Headers: ${headers.toString()}');
-      print('File: ${file.path}');
+      print('📌 [POST MULTIPART REQUEST]');
+      print('➡️ URL: $url');
+      print('➡️ Headers: ${headers.toString()}');
+      print('➡️ File: ${file.path}');
 
       FormData formData = FormData.fromMap({
         fileField: await MultipartFile.fromFile(
@@ -190,22 +158,38 @@ Future<dynamic> post({
         options: Options(headers: headers),
       );
 
-      print('✅ Response status: ${response.statusCode}');
-      print('✅ Response headers: ${response.headers}');
-      print('✅ Response data: ${response.data}');
+      print('✅ [POST MULTIPART SUCCESS] ${response.statusCode}');
+      print('📦 Data: ${response.data}');
 
       return response.data;
     } on DioException catch (e) {
-      print('❌ DioException: ${e.message}');
-      if (e.response != null) {
-        print('❌ DioException status: ${e.response?.statusCode}');
-        print('❌ DioException headers: ${e.response?.headers}');
-        print('❌ DioException data: ${e.response?.data}');
+      _handleDioError(e);
+
+      if (e.response?.statusCode == 401) {
+        final newToken = await RefreshTokenService().refreshAccessToken();
+        if (newToken != null) {
+          return await postMultipart(
+            url: url,
+            fileField: fileField,
+            file: file,
+            token: newToken,
+          );
+        }
       }
-      throw Exception("HTTP Error: ${e.response?.statusCode} - ${e.message}");
+      rethrow;
     } catch (e) {
-      print('❌ Unexpected Error: $e');
+      print('❌ [MULTIPART UNEXPECTED ERROR] $e');
       throw Exception("Unexpected Error: $e");
+    }
+  }
+
+  // 🔹 Helper function لتوحيد التعامل مع Errors
+  void _handleDioError(DioException e) {
+    print('❌ DioException: ${e.message}');
+    if (e.response != null) {
+      print('❌ Status: ${e.response?.statusCode}');
+      print('❌ Headers: ${e.response?.headers}');
+      print('❌ Data: ${e.response?.data}');
     }
   }
 }

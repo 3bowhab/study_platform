@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:study_platform/helper/validators.dart';
 import 'package:study_platform/services/auth_services.dart';
+import 'package:study_platform/views/Drawer_views/new_password_view.dart';
 import 'package:study_platform/widgets/custom_text_field.dart';
 import 'package:study_platform/widgets/loading_indecator.dart';
 
@@ -18,8 +19,11 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
   final TextEditingController _oldPasswordController = TextEditingController();
   final TextEditingController _newPasswordController = TextEditingController();
   final TextEditingController _confirmController = TextEditingController();
-  ChangePasswordService changePasswordService = ChangePasswordService();
   bool isLoading = false;
+  
+  final ChangePasswordService changePasswordService = ChangePasswordService();
+  final PasswordResetService passwordResetService = PasswordResetService();
+  
 
   @override
   Widget build(BuildContext context) {
@@ -63,6 +67,8 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
                   ),
                   const SizedBox(height: 20),
                   submitButton(context),
+                  const SizedBox(height: 20),
+                  requestResetPassword(context),
                 ],
               ),
             ),
@@ -118,6 +124,39 @@ ElevatedButton submitButton(BuildContext context) {
         }
       },
       child: const Text("تأكيد"),
+    );
+  }
+
+
+   TextButton requestResetPassword(BuildContext context) {
+    return TextButton(
+      onPressed: () async {
+        setState(() {
+          isLoading = true; // ⏳ يبدأ اللودينج
+        });
+
+        try {
+          await passwordResetService.requestPasswordReset();
+          setState(() {
+            isLoading = false; // ⏳ ينتهي اللودينج
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("📩 رابط إعادة التعيين اتبعت لبريدك")),
+          );
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const NewPasswordView()),
+          );
+        } catch (e) {
+          setState(() {
+            isLoading = false; // ⏳ ينتهي اللودينج
+          });
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text("❌ حصل خطأ، حاول تاني")));
+        }
+      },
+      child: const Text("نسيت كلمة المرور؟"),
     );
   }
 }
