@@ -3,7 +3,7 @@ import 'package:study_platform/helper/storage_service.dart';
 import 'package:study_platform/helper/validators.dart';
 import 'package:study_platform/models/authentication/auth_response_model.dart';
 import 'package:study_platform/models/authentication/login_model.dart';
-import 'package:study_platform/services/auth_services.dart';
+import 'package:study_platform/services/authentication/login_service.dart';
 import 'package:study_platform/views/home_view.dart';
 import 'package:study_platform/views/register_view.dart';
 import 'package:study_platform/widgets/custom_text_field.dart';

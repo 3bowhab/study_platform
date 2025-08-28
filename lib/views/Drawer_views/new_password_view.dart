@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:study_platform/helper/validators.dart';
-import 'package:study_platform/services/auth_services.dart';
+import 'package:study_platform/services/password/reset_password_request_service.dart';
 import 'package:study_platform/widgets/custom_text_field.dart';
 import 'package:study_platform/widgets/loading_indecator.dart';
 
@@ -18,7 +18,8 @@ class _NewPasswordViewState extends State<NewPasswordView> {
   String? otp;
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmController = TextEditingController();
-  PasswordResetConfirmService passwordResetConfirmService = PasswordResetConfirmService();
+
+  final PasswordResetService passwordResetConfirmService = PasswordResetService();
 
   bool isLoading = false;
 

@@ -7,7 +7,7 @@ class StorageService {
   static const String _keyFullName = "full_name";
   static const String _keyEmail = "email";
 
-  /// حفظ التوكنات
+  /// حفظ التوكنات وبيانات تانيه 
   Future<void> saveTokens(String access, String refresh, String fullName, String email) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_keyAccessToken, access);
@@ -17,6 +17,8 @@ class StorageService {
     await prefs.setBool(_keyIsLoggedIn, true);
   }
 
+
+  /// حفظ التوكنات بس
   Future<void> resetTokens(
     String access,
     String refresh,

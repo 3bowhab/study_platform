@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:study_platform/helper/storage_service.dart';
 import 'package:study_platform/helper/validators.dart';
 import 'package:study_platform/models/authentication/auth_response_model.dart';
-import 'package:study_platform/services/auth_services.dart';
+import 'package:study_platform/services/authentication/register_service.dart';
 import 'package:study_platform/views/home_view.dart';
 import 'package:study_platform/widgets/custom_text_field.dart';
 import 'package:study_platform/widgets/loading_indecator.dart';

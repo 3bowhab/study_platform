@@ -44,6 +44,7 @@ class Api {
     }
   }
 
+
   Future<dynamic> post({
     required String url,
     required dynamic body,
@@ -86,6 +87,7 @@ class Api {
     }
   }
 
+
   Future<dynamic> put({
     required String url,
     required dynamic body,
@@ -127,6 +129,7 @@ class Api {
       throw Exception("Unexpected Error: $e");
     }
   }
+
 
   Future<dynamic> postMultipart({
     required String url,
@@ -182,6 +185,7 @@ class Api {
       throw Exception("Unexpected Error: $e");
     }
   }
+
 
   // 🔹 Helper function لتوحيد التعامل مع Errors
   void _handleDioError(DioException e) {

@@ -7,6 +7,7 @@ class ApiConstants {
   static const String login = "$baseUrl/user/login/";
   static const String register = "$baseUrl/user/register/";
   static const String verifyEmail = "$baseUrl/user/verify-email";
+  static const String passwordResetRequest = "$baseUrl/user/password-reset/request/";
   static const String changepassword = "$baseUrl/user/change-password/";
   static const String passwordResetConfirm = "$baseUrl/user/password-reset/confirm";
 }
