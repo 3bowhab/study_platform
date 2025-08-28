@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
-import 'package:study_platform/services/auth_services.dart';
+import 'package:study_platform/services/authentication/refresh_token_service.dart';
 
 // ignore_for_file: avoid_print
 
