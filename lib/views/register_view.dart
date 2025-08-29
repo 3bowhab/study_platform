@@ -22,7 +22,7 @@ class _RegisterViewState extends State<RegisterView> {
 
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmController = TextEditingController();
-  String? email, username, firstName, lastName;
+  String? email, username, firstName, lastName, phoneNumber, userType, dateOfBirth;
 
   bool isLoading = false;
 
@@ -93,6 +93,30 @@ class _RegisterViewState extends State<RegisterView> {
                       lastName = newValue;
                     },
                   ),
+                  SizedBox(height: 16),
+                  CustomTextField(
+                    labelText: 'phone number',
+                    validator: AppValidators.phoneValidator,
+                    onsaved: (newValue) {
+                      phoneNumber = newValue;
+                    },
+                  ),
+                  SizedBox(height: 16),
+                  CustomTextField(
+                    labelText: 'user type',
+                    validator: AppValidators.requiredField,
+                    onsaved: (newValue) {
+                      userType = newValue;
+                    },
+                  ),
+                  SizedBox(height: 16),
+                  CustomTextField(
+                    labelText: 'date of birth',
+                    validator: AppValidators.requiredField,
+                    onsaved: (newValue) {
+                      dateOfBirth = newValue;
+                    },
+                  ),
                   const SizedBox(height: 20),
                   submitButton(context),
                   const SizedBox(height: 20),
@@ -144,6 +168,9 @@ class _RegisterViewState extends State<RegisterView> {
             confirmPassword: _confirmController.text.trim(),
             firstname: firstName!,
             lastname: lastName!,
+            phoneNumber: phoneNumber!,
+            userType: userType!,
+            dateOfBirth: dateOfBirth!,
           );
 
           setState(() {
@@ -162,10 +189,9 @@ class _RegisterViewState extends State<RegisterView> {
               const SnackBar(content: Text("✅ Registration Successful")),
             );
 
-            Navigator.pushAndRemoveUntil(
+            Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const ConfirmEmailView()),
-              (route) => false, // false = ميخليش أي صفحة قديمة
             );
 
             print("Response: $response");

@@ -10,4 +10,5 @@ class ApiConstants {
   static const String passwordResetRequest = "$baseUrl/user/password-reset/request/";
   static const String changepassword = "$baseUrl/user/change-password/";
   static const String passwordResetConfirm = "$baseUrl/user/password-reset/confirm";
+  static const String deleteAccount = "$baseUrl/user/delete-account/";
 }

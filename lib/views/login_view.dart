@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:study_platform/helper/storage_service.dart';
 import 'package:study_platform/helper/validators.dart';
 import 'package:study_platform/models/authentication/auth_response_model.dart';
 import 'package:study_platform/models/authentication/login_model.dart';
@@ -110,13 +109,6 @@ class _LoginViewState extends State<LoginView> {
           try {
             // ✨ ننده السيرفيس ونبعت الموديل.toJson()
             AuthResponseModel response = await LoginService().login(loginModel);
-
-            await StorageService().saveTokens(
-              response.tokens.access,
-              response.tokens.refresh,
-              response.user.fullName,
-              response.user.email,
-            );
 
             setState(() {
               isLoading = false; // ✅ وقف اللودينج

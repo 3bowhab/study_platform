@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:study_platform/helper/validators.dart';
-import 'package:study_platform/services/password/reset_password_request_service.dart';
+import 'package:study_platform/services/account/reset_password_request_service.dart';
 import 'package:study_platform/widgets/custom_text_field.dart';
 import 'package:study_platform/widgets/loading_indecator.dart';
 
@@ -101,6 +101,7 @@ class _NewPasswordViewState extends State<NewPasswordView> {
               context,
             ).showSnackBar(const SnackBar(content: Text("✅ Password Reset Successful")));
 
+            Navigator.pop(context);
             Navigator.pop(context);
 
             // print("Response: $response");
