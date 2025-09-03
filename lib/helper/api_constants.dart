@@ -12,4 +12,5 @@ class ApiConstants {
   static const String passwordResetConfirm = "$baseUrl/user/password-reset/confirm";
   static const String deleteAccount = "$baseUrl/user/delete-account/";
   static const String logout = "$baseUrl/user/logout/";
+  static const String linkChild = "$baseUrl/user/link-child/";
 }

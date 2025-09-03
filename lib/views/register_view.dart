@@ -3,11 +3,13 @@
 import 'package:flutter/material.dart';
 import 'package:study_platform/helper/validators.dart';
 import 'package:study_platform/models/authentication/register_model.dart';
+import 'package:study_platform/services/authentication/link_child_service.dart';
 import 'package:study_platform/services/authentication/register_service.dart';
 import 'package:study_platform/views/confirm_email_view.dart';
 import 'package:study_platform/views/login_view.dart';
 import 'package:study_platform/widgets/custom_text_field.dart';
 import 'package:study_platform/widgets/loading_indecator.dart';
+import 'package:study_platform/widgets/register_user_type.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
@@ -21,9 +23,10 @@ class _RegisterViewState extends State<RegisterView> {
   AutovalidateMode autovalidateMode = AutovalidateMode.disabled;
 
   final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmController = TextEditingController();
-  String? email, firstName, lastName, phoneNumber, userType, dateOfBirth;
+  String? firstName, lastName, phoneNumber, userType, childUsername, dateOfBirth;
 
   bool isLoading = false;
 
@@ -54,9 +57,7 @@ class _RegisterViewState extends State<RegisterView> {
                   CustomTextField(
                     labelText: 'Email',
                     validator: AppValidators.emailValidator,
-                    onsaved: (newValue) {
-                      email = newValue;
-                    },
+                    controller: _emailController,
                   ),
                   SizedBox(height: 16),
                   CustomTextField(
@@ -101,11 +102,17 @@ class _RegisterViewState extends State<RegisterView> {
                     },
                   ),
                   SizedBox(height: 16),
-                  CustomTextField(
-                    labelText: 'user type',
-                    validator: AppValidators.requiredField,
-                    onsaved: (newValue) {
-                      userType = newValue;
+                  // CustomTextField(
+                  //   labelText: 'user type',
+                  //   validator: AppValidators.requiredField,
+                  //   onsaved: (newValue) {
+                  //     userType = newValue;
+                  //   },
+                  // ),
+                  RegisterUserType(
+                    onUserTypeSelected: (selectedType, child) {
+                      userType = selectedType;
+                      childUsername = child;
                     },
                   ),
                   SizedBox(height: 16),
@@ -159,10 +166,9 @@ class _RegisterViewState extends State<RegisterView> {
         if (formkey.currentState!.validate()) {
           formkey.currentState!.save();
 
-          // ✨ نكوّن الموديل
           final registerModel = RegisterModel(
             username: _usernameController.text.trim(),
-            email: email!,
+            email: _emailController.text.trim(),
             password: _passwordController.text.trim(),
             confirmPassword: _confirmController.text.trim(),
             firstname: firstName!,
@@ -173,17 +179,32 @@ class _RegisterViewState extends State<RegisterView> {
           );
 
           setState(() {
-            isLoading = true; // ⏳ يبدأ اللودينج
+            isLoading = true;
           });
 
           try {
-            // ✨ ننده السيرفيس ونبعت الموديل.toJson()
+            // ✨ Step 1: Register
             final response = await RegisterService().register(registerModel);
+            print("✅ Register response: $response");
+
+            // ✨ Step 2: Link child (only if parent)
+            if (userType == "parent" &&
+                childUsername != null &&
+                childUsername!.isNotEmpty) {
+              try {
+                await LinkChildService().linkChild(childUsername!);
+                print("✅ Child linked successfully");
+              } catch (e) {
+                print("❌ Error linking child: $e");
+                // تقدر هنا تختار: توقف الفلو ولا تكمل عادي
+              }
+            }
 
             setState(() {
-              isLoading = false; // ✅ وقف اللودينج
+              isLoading = false;
             });
 
+            // ✨ Step 3: Navigate to confirm email
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text("✅ Registration Successful")),
             );
@@ -192,19 +213,15 @@ class _RegisterViewState extends State<RegisterView> {
               context,
               MaterialPageRoute(builder: (context) => const ConfirmEmailView()),
             );
-
-            print("Response: $response");
           } catch (e) {
             setState(() {
-              isLoading = false; // ❌ وقف اللودينج برضه
+              isLoading = false;
             });
-            
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(
+
+            ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-              content: Text("❌ Error: $e"),
-              duration: const Duration(seconds: 15),
+                content: Text("❌ Error: $e"),
+                duration: const Duration(seconds: 15),
               ),
             );
           }
