@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:study_platform/helper/validators.dart';
 import 'package:study_platform/services/authentication/register_service.dart';
+import 'package:study_platform/services/authentication/resend_ver_code_service.dart';
 import 'package:study_platform/views/home_view.dart';
 import 'package:study_platform/widgets/custom_text_field.dart';
 import 'package:study_platform/widgets/loading_indecator.dart';
@@ -44,6 +45,8 @@ class _ConfirmEmailViewState extends State<ConfirmEmailView> {
                     ),
                     const SizedBox(height: 16),
                     confirmButton(context),
+                    const SizedBox(height: 16),
+                    resendButton(context),
                   ],
                 ),
               ),
@@ -99,6 +102,42 @@ class _ConfirmEmailViewState extends State<ConfirmEmailView> {
         }
       },
       child: const Text('Confirm'),
+    );
+  }
+
+  TextButton resendButton(BuildContext context) {
+    return TextButton(
+      onPressed: () async {
+        setState(() {
+          isLoading = true; // ⏳ يبدأ اللودينج
+        });
+
+        try {
+          await ResendVerificationEmailService().resendVerificationEmail();
+
+          setState(() {
+            isLoading = false; // ✅ وقف اللودينج
+          });
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("📩 Verification email sent successfully"),
+            ),
+          );
+        } catch (e) {
+          setState(() {
+            isLoading = false; // ❌ وقف اللودينج برضه
+          });
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("❌ Error: $e"),
+              duration: const Duration(seconds: 15),
+            ),
+          );
+        }
+      },
+      child: const Text("Resend Verification Email"),
     );
   }
 }
