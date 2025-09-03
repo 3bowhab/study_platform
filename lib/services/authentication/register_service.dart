@@ -34,7 +34,7 @@ class RegisterService {
     }
   }
 
-  Future<AuthResponseModel> confirmEmail(String otp) async {
+  Future<String> confirmEmail(String otp) async {
     try {
       final response = await api.post(
         url: "${ApiConstants.verifyEmail}/$otp/",

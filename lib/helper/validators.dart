@@ -12,12 +12,26 @@ class AppValidators {
     if (value == null || value.trim().isEmpty) {
       return "Email is required";
     }
-    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-    if (!emailRegex.hasMatch(value)) {
+
+    String email = value.trim();
+
+    // وجود مسافات جوة النص
+    if (email.contains(" ")) {
+      return "Email cannot contain spaces";
+    }
+
+    // regex للتحقق من معظم الحالات
+    final emailRegex = RegExp(
+      r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+    );
+
+    if (!emailRegex.hasMatch(email)) {
       return "Enter a valid email";
     }
-    return null;
+
+    return null; // ✅ Valid
   }
+
 
   /// Password validator
   static String? passwordValidator(String? value) {

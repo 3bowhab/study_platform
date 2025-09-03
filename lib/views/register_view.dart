@@ -20,9 +20,10 @@ class _RegisterViewState extends State<RegisterView> {
   final formkey = GlobalKey<FormState>();
   AutovalidateMode autovalidateMode = AutovalidateMode.disabled;
 
+  final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmController = TextEditingController();
-  String? email, username, firstName, lastName, phoneNumber, userType, dateOfBirth;
+  String? email, firstName, lastName, phoneNumber, userType, dateOfBirth;
 
   bool isLoading = false;
 
@@ -47,9 +48,7 @@ class _RegisterViewState extends State<RegisterView> {
                   CustomTextField(
                     labelText: 'Username',
                     validator: AppValidators.usernameValidator,
-                    onsaved: (newValue) {
-                      username = newValue;
-                    },
+                    controller: _usernameController,
                   ),
                   SizedBox(height: 16),
                   CustomTextField(
@@ -162,7 +161,7 @@ class _RegisterViewState extends State<RegisterView> {
 
           // ✨ نكوّن الموديل
           final registerModel = RegisterModel(
-            username: username!,
+            username: _usernameController.text.trim(),
             email: email!,
             password: _passwordController.text.trim(),
             confirmPassword: _confirmController.text.trim(),
