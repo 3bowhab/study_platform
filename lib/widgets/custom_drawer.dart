@@ -22,21 +22,21 @@ class _CustomDrawerState extends State<CustomDrawer> {
           customDrawerHeader(),
           ListTile(
             leading: const Icon(Icons.settings),
-            title: const Text('الإعدادات'),
+            title: const Text('الحساب'),
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const SettingsView()),
+                MaterialPageRoute(builder: (context) => const AccountView()),
               );
             },
           ),
           ListTile(
             leading: const Icon(Icons.person),
-            title: const Text('الحساب'),
+            title: const Text('الإعدادات'),
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => AccountView()),
+                MaterialPageRoute(builder: (context) => SettingsView()),
               );
             },
           ),

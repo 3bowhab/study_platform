@@ -5,14 +5,14 @@ import 'package:study_platform/views/Drawer_views/change_password_view.dart';
 import 'package:study_platform/views/register_view.dart';
 import 'package:study_platform/widgets/loading_indecator.dart';
 
-class AccountView extends StatefulWidget {
-  AccountView({super.key});
+class SettingsView extends StatefulWidget {
+  SettingsView({super.key});
 
   @override
-  State<AccountView> createState() => _AccountViewState();
+  State<SettingsView> createState() => _SettingsViewState();
 }
 
-class _AccountViewState extends State<AccountView> {
+class _SettingsViewState extends State<SettingsView> {
   DeleteAccountService deleteAccountService = DeleteAccountService();
   bool isLoading = false;
 
@@ -21,7 +21,7 @@ class _AccountViewState extends State<AccountView> {
     return Stack(
       children: [
         Scaffold(
-          appBar: AppBar(title: const Text("الحساب")),
+          appBar: AppBar(title: const Text("الإعدادات")),
           body: Center(
             child: Column(
               children: [
