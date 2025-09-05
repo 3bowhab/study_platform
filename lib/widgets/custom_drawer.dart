@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:study_platform/helper/storage_service.dart';
-import 'package:study_platform/services/account/logout_service.dart';
+import 'package:study_platform/services/settings/logout_service.dart';
 import 'package:study_platform/views/Drawer_views/account_view.dart';
 import 'package:study_platform/views/Drawer_views/settings_view.dart';
 import 'package:study_platform/views/register_view.dart';

@@ -26,6 +26,7 @@ class LoginService {
         authResponse.tokens.refresh,
         authResponse.user.fullName,
         authResponse.user.email,
+        authResponse.user.userType,
       );
 
       return authResponse;

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:study_platform/helper/validators.dart';
-import 'package:study_platform/services/account/change_password_service.dart';
-import 'package:study_platform/services/account/reset_password_request_service.dart';
+import 'package:study_platform/services/settings/change_password_service.dart';
+import 'package:study_platform/services/settings/reset_password_request_service.dart';
 import 'package:study_platform/views/Drawer_views/new_password_view.dart';
 import 'package:study_platform/widgets/custom_text_field.dart';
 import 'package:study_platform/widgets/loading_indecator.dart';

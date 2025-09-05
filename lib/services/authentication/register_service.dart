@@ -2,7 +2,7 @@ import 'package:study_platform/helper/api.dart';
 import 'package:study_platform/helper/api_constants.dart';
 import 'package:study_platform/models/authentication/auth_response_model.dart';
 import 'package:study_platform/models/authentication/register_model.dart';
-import 'package:study_platform/services/account/delete_account_service.dart';
+import 'package:study_platform/services/settings/delete_account_service.dart';
 
 class RegisterService {
   final Api api = Api();
@@ -25,6 +25,7 @@ class RegisterService {
         authResponse.tokens.refresh,
         authResponse.user.fullName,
         authResponse.user.email,
+        authResponse.user.userType,
       );
 
       return authResponse;

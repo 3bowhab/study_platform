@@ -14,4 +14,7 @@ class ApiConstants {
   static const String logout = "$baseUrl/user/logout/";
   static const String linkChild = "$baseUrl/user/link-child/";
   static const String resendVerificationEmail = "$baseUrl/user/resend-verification-email/";
+  static const String studentProfile = "$baseUrl/user/profile/student/";
+  static const String parentProfile = "$baseUrl/user/profile/parent/";
+  static const String teacherProfile = "$baseUrl/user/profile/teacher/";
 }

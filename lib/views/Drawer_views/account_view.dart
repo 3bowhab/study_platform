@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:study_platform/helper/storage_service.dart';
-import 'package:study_platform/services/account/delete_account_service.dart';
+import 'package:study_platform/services/settings/delete_account_service.dart';
 import 'package:study_platform/views/Drawer_views/change_password_view.dart';
 import 'package:study_platform/views/register_view.dart';
 import 'package:study_platform/widgets/loading_indecator.dart';
