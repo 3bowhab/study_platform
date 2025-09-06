@@ -7,6 +7,7 @@ import 'package:study_platform/services/authentication/link_child_service.dart';
 import 'package:study_platform/services/authentication/register_service.dart';
 import 'package:study_platform/views/confirm_email_view.dart';
 import 'package:study_platform/views/login_view.dart';
+import 'package:study_platform/widgets/birthday_input.dart';
 import 'package:study_platform/widgets/custom_text_field.dart';
 import 'package:study_platform/widgets/loading_indecator.dart';
 import 'package:study_platform/widgets/register_user_type.dart';
@@ -109,18 +110,18 @@ class _RegisterViewState extends State<RegisterView> {
                   //     userType = newValue;
                   //   },
                   // ),
+                  SizedBox(height: 16),
+                  BirthDateField(
+                    initialDate: dateOfBirth,
+                    onChanged: (value) {
+                      dateOfBirth = value;
+                    },
+                  ),
+                  const SizedBox(height: 16),
                   RegisterUserType(
                     onUserTypeSelected: (selectedType, child) {
                       userType = selectedType;
                       childUsername = child;
-                    },
-                  ),
-                  SizedBox(height: 16),
-                  CustomTextField(
-                    labelText: 'date of birth',
-                    validator: AppValidators.requiredField,
-                    onsaved: (newValue) {
-                      dateOfBirth = newValue;
                     },
                   ),
                   const SizedBox(height: 20),

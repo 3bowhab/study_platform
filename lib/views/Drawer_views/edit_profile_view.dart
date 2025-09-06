@@ -7,6 +7,7 @@ import 'package:study_platform/services/account/edit_parent_profile_service.dart
 import 'package:study_platform/services/account/edit_student_profile_service.dart';
 import 'package:study_platform/services/account/edit_teacher_profile_service.dart';
 import 'package:study_platform/services/account/edit_user_profile_service.dart';
+import 'package:study_platform/widgets/birthday_input.dart';
 
 class EditProfileView extends StatefulWidget {
   final dynamic profile; // ممكن يكون Student / Teacher / Parent
@@ -156,7 +157,17 @@ class _EditProfileViewState extends State<EditProfileView> {
               _buildTextField("الاسم الأول", firstNameController),
               _buildTextField("الاسم الأخير", lastNameController),
               _buildTextField("رقم الهاتف", phoneController),
-              _buildTextField("تاريخ الميلاد", dateOfBirthController),
+              BirthDateField(
+                initialDate:
+                    dateOfBirthController.text.isNotEmpty
+                        ? dateOfBirthController.text
+                        : null,
+                onChanged: (selectedDate) {
+                  setState(() {
+                    dateOfBirthController.text = selectedDate;
+                  });
+                },
+              ),
               _buildTextField("السيرة", bioController),
               _buildTextField("العنوان", addressController),
               _buildTextField("المدينة", cityController),
