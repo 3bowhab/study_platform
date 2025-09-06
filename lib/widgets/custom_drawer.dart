@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:study_platform/helper/storage_service.dart';
 import 'package:study_platform/services/settings/logout_service.dart';
-import 'package:study_platform/views/Drawer_views/account_view.dart';
 import 'package:study_platform/views/Drawer_views/settings_view.dart';
+import 'package:study_platform/views/Drawer_views/account_view.dart';
 import 'package:study_platform/views/register_view.dart';
 
 class CustomDrawer extends StatefulWidget {
-  const CustomDrawer({super.key});
+ CustomDrawer({super.key});
 
   @override
   State<CustomDrawer> createState() => _CustomDrawerState();
@@ -41,6 +41,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
             },
           ),
           logoutTile(context),
+          logoutWithoutService(context),
         ],
       ),
     );
