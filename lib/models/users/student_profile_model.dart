@@ -33,4 +33,14 @@ class StudentProfileModel extends BaseProfileModel {
       interests: json["interests"] ?? "",
     );
   }
+
+    Map<String, dynamic> toJson() {
+    return {
+      "parent_info": parentInfo,
+      "grade_level": gradeLevel,
+      "school_name": schoolName,
+      "learning_goals": learningGoals,
+      "interests": interests,
+    };
+  }
 }

@@ -48,4 +48,22 @@ class TeacherProfileModel extends BaseProfileModel {
       approvedBy: json["approved_by"] ?? 0,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "id": id,
+      "created_at": createdAt,
+      "updated_at": updatedAt,
+      "specialization": specialization,
+      "experience_years": experienceYears,
+      "education": education,
+      "certifications": certifications,
+      "hourly_rate": hourlyRate,
+      "is_approved": isApproved,
+      "approved_at": approvedAt,
+      "linkedin_url": linkedinUrl,
+      "website_url": websiteUrl,
+      "approved_by": approvedBy,
+    };
+  }
 }

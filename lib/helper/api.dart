@@ -130,6 +130,48 @@ class Api {
     }
   }
 
+  Future<dynamic> patch({
+    required String url,
+    required dynamic body,
+    required String? token,
+  }) async {
+    try {
+      Map<String, String> headers = {'Content-Type': 'application/json'};
+      if (token != null) {
+        headers['Authorization'] = 'Bearer $token';
+      }
+
+      print('📌 [PATCH REQUEST]');
+      print('➡️ URL: $url');
+      print('➡️ Headers: ${headers.toString()}');
+      print('➡️ Body: $body');
+
+      Response response = await dio.patch(
+        url,
+        data: body,
+        options: Options(headers: headers),
+      );
+
+      print('✅ [PATCH SUCCESS] ${response.statusCode}');
+      print('📦 Data: ${response.data}');
+
+      return response.data;
+    } on DioException catch (e) {
+      _handleDioError(e);
+
+      // 🟢 Refresh token retry
+      if (e.response?.statusCode == 401) {
+        final newToken = await RefreshTokenService().refreshAccessToken();
+        if (newToken != null) {
+          return await patch(url: url, body: body, token: newToken);
+        }
+      }
+      rethrow;
+    } catch (e) {
+      print('❌ [PATCH UNEXPECTED ERROR] $e');
+      throw Exception("Unexpected Error: $e");
+    }
+  }
 
   Future<dynamic> postMultipart({
     required String url,

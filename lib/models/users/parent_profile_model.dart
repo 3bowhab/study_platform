@@ -33,4 +33,17 @@ class ParentProfileModel extends BaseProfileModel {
       smsNotifications: json["sms_notifications"] ?? false,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "id": id,
+      "created_at": createdAt,
+      "updated_at": updatedAt,
+      "children": children,
+      "occupation": occupation,
+      "emergency_contact": emergencyContact,
+      "email_notifications": emailNotifications,
+      "sms_notifications": smsNotifications,
+    };
+  }
 }

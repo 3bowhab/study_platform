@@ -1,4 +1,4 @@
-class UserModelModel {
+class UserProfileModel {
   final int id;
   final String username;
   final String email;
@@ -18,7 +18,7 @@ class UserModelModel {
   final String lastLogin;
   final String parentName;
 
-  UserModelModel({
+  UserProfileModel({
     required this.id,
     required this.username,
     required this.email,
@@ -39,8 +39,8 @@ class UserModelModel {
     required this.parentName,
   });
 
-  factory UserModelModel.fromJson(Map<String, dynamic> json) {
-    return UserModelModel(
+  factory UserProfileModel.fromJson(Map<String, dynamic> json) {
+    return UserProfileModel(
       id: json["id"],
       username: json["username"] ?? "",
       email: json["email"] ?? "",
@@ -60,5 +60,23 @@ class UserModelModel {
       lastLogin: json["last_login"] ?? "",
       parentName: json["parent_name"] ?? "",
     );
+  }
+
+  
+  Map<String, dynamic> toJson() {
+    return {
+      "username": username,
+      "email": email,
+      "first_name": firstName,
+      "last_name": lastName,
+      "phone_number": phoneNumber,
+      "profile_picture": profilePicture,
+      "date_of_birth": dateOfBirth,
+      "bio": bio,
+      "address": address,
+      "city": city,
+      "country": country,
+      "parent_name": parentName,
+    };
   }
 }
