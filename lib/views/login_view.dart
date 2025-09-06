@@ -3,6 +3,8 @@ import 'package:study_platform/helper/validators.dart';
 import 'package:study_platform/models/authentication/auth_response_model.dart';
 import 'package:study_platform/models/authentication/login_model.dart';
 import 'package:study_platform/services/authentication/login_service.dart';
+import 'package:study_platform/services/settings/reset_password_request_service.dart';
+import 'package:study_platform/views/Drawer_views/new_password_view.dart';
 import 'package:study_platform/views/home_view.dart';
 import 'package:study_platform/views/register_view.dart';
 import 'package:study_platform/widgets/custom_text_field.dart';
@@ -20,6 +22,7 @@ class _LoginViewState extends State<LoginView> {
   AutovalidateMode autovalidateMode = AutovalidateMode.disabled;
 
   final TextEditingController _passwordController = TextEditingController();
+  final PasswordResetService passwordResetService = PasswordResetService();
   String? usernameOrEmail;
 
   bool isLoading = false;
@@ -58,6 +61,7 @@ class _LoginViewState extends State<LoginView> {
                   loginButton(context),
                   const SizedBox(height: 20),
                   goToRegisterView(context),
+                  // requestResetPassword(context),
                 ],
               ),
             )
@@ -144,6 +148,39 @@ class _LoginViewState extends State<LoginView> {
         }
       },
       child: const Text("Login"),
+    );
+  }
+
+  TextButton requestResetPassword(BuildContext context) {
+    return TextButton(
+      onPressed: () async {
+        setState(() {
+          isLoading = true; // ⏳ يبدأ اللودينج
+        });
+
+        try {
+          await passwordResetService.requestPasswordReset();
+          setState(() {
+            isLoading = false; // ⏳ ينتهي اللودينج
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("📩 رابط إعادة التعيين اتبعت لبريدك")),
+          );
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const NewPasswordView()),
+          );
+        } catch (e) {
+          setState(() {
+            isLoading = false; // ⏳ ينتهي اللودينج
+          });
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text("❌ حصل خطأ، حاول تاني")));
+          print("Error requesting password reset: $e");
+        }
+      },
+      child: const Text("نسيت كلمة المرور؟"),
     );
   }
 }

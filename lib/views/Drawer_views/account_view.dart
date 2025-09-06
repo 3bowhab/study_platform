@@ -21,7 +21,11 @@ class _AccountViewState extends State<AccountView> {
           appBar: AppBar(title: const Text("الحساب")),
           body: Center(
             child: Column(
-              children: [profileButton(context),],
+              children: [
+                profileButton(context),
+                // const SizedBox(height: 20),
+                // editProfileButton(context),
+              ],
             ),
           ),
         ),
@@ -30,7 +34,7 @@ class _AccountViewState extends State<AccountView> {
     );
   }
 
-ElevatedButton profileButton(BuildContext context) {
+  ElevatedButton profileButton(BuildContext context) {
     return ElevatedButton(
       onPressed: () async {
         setState(() => isLoading = true);
@@ -57,4 +61,12 @@ ElevatedButton profileButton(BuildContext context) {
     );
   }
 
+
+  // ElevatedButton  editProfileButton(BuildContext context) {
+  //   return ElevatedButton(
+  //     onPressed: () async {
+  //     },
+  //     child: const Text("تعديل بيانات الحساب"),
+  //   );
+  // }
 }

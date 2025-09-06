@@ -1,5 +1,5 @@
-import 'package:study_platform/models/authentication/user_model.dart';
 import 'package:study_platform/models/users/base_profile_model.dart';
+import 'package:study_platform/models/users/user_profile_model.dart';
 
 class TeacherProfileModel extends BaseProfileModel {
   final String specialization;
@@ -33,7 +33,7 @@ class TeacherProfileModel extends BaseProfileModel {
   factory TeacherProfileModel.fromJson(Map<String, dynamic> json) {
     return TeacherProfileModel(
       id: json["id"],
-      user: UserModel.fromJson(json["user"]),
+      user: UserProfileModel.fromJson(json["user"]),
       createdAt: json["created_at"] ?? "",
       updatedAt: json["updated_at"] ?? "",
       specialization: json["specialization"] ?? "",

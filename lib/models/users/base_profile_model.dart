@@ -1,8 +1,9 @@
-import 'package:study_platform/models/authentication/user_model.dart';
+
+import 'package:study_platform/models/users/user_profile_model.dart';
 
 class BaseProfileModel {
   final int id;
-  final UserModel user;
+  final UserProfileModel user;
   final String createdAt;
   final String updatedAt;
 

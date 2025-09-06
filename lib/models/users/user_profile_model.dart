@@ -7,7 +7,7 @@ class UserProfileModel {
   final String fullName;
   final String userType; // student, parent, teacher
   final String phoneNumber;
-  final String profilePicture;
+  // final String profilePicture;
   final String dateOfBirth;
   final String bio;
   final String address;
@@ -27,7 +27,7 @@ class UserProfileModel {
     required this.fullName,
     required this.userType,
     required this.phoneNumber,
-    required this.profilePicture,
+    // required this.profilePicture,
     required this.dateOfBirth,
     required this.bio,
     required this.address,
@@ -49,7 +49,7 @@ class UserProfileModel {
       fullName: json["full_name"] ?? "",
       userType: json["user_type"] ?? "",
       phoneNumber: json["phone_number"] ?? "",
-      profilePicture: json["profile_picture"] ?? "",
+      // profilePicture: json["profile_picture"] ?? "",
       dateOfBirth: json["date_of_birth"] ?? "",
       bio: json["bio"] ?? "",
       address: json["address"] ?? "",
@@ -70,7 +70,7 @@ class UserProfileModel {
       "first_name": firstName,
       "last_name": lastName,
       "phone_number": phoneNumber,
-      "profile_picture": profilePicture,
+      // "profile_picture": profilePicture,
       "date_of_birth": dateOfBirth,
       "bio": bio,
       "address": address,

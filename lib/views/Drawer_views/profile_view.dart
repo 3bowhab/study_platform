@@ -1,24 +1,80 @@
 import 'package:flutter/material.dart';
-import 'package:study_platform/models/authentication/user_model.dart';
 import 'package:study_platform/models/users/parent_profile_model.dart';
 import 'package:study_platform/models/users/student_profile_model.dart';
 import 'package:study_platform/models/users/teacher_profile_model.dart';
+import 'package:study_platform/models/users/user_profile_model.dart';
+import 'package:study_platform/services/account/profile_repository.dart';
+import 'package:study_platform/views/Drawer_views/edit_profile_view.dart';
+import 'package:study_platform/widgets/loading_indecator.dart';
 
-class ProfileView extends StatelessWidget {
-  final dynamic profile; // ممكن Student / Teacher / Parent
+class ProfileView extends StatefulWidget {
+  final dynamic profile; // Student / Teacher / Parent
 
   const ProfileView({super.key, required this.profile});
 
   @override
+  State<ProfileView> createState() => _ProfileViewState();
+}
+
+class _ProfileViewState extends State<ProfileView> {
+  late dynamic profile;
+  bool isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    profile = widget.profile;
+  }
+
+  Future<void> _refreshProfile() async {
+    setState(() => isLoading = true);
+    try {
+      final refreshed = await ProfileRepository().getUserProfile();
+      setState(() => profile = refreshed);
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("❌ فشل تحديث البيانات: $e")));
+    } finally {
+      setState(() => isLoading = false);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("بيانات الحساب")),
-      body: ListView(
-        padding: const EdgeInsets.all(16.0),
-        children: [
-          Directionality(textDirection: TextDirection.rtl, child: _buildProfileContent()),
-        ],
-      ),
+    return Stack(
+      children: [
+        Scaffold(
+          appBar: AppBar(title: const Text("بيانات الحساب")),
+          body: ListView(
+            padding: const EdgeInsets.all(16.0),
+            children: [
+              Directionality(
+                textDirection: TextDirection.rtl,
+                child: _buildProfileContent(),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () async {
+                  final updated = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => EditProfileView(profile: profile),
+                    ),
+                  );
+
+                  if (updated == true) {
+                    // ✅ حصل تعديل → نعمل GET جديد
+                    await _refreshProfile();
+                  }
+                },
+                child: const Text("✏️ تعديل الحساب"),
+              ),
+            ],
+          ),
+        ),
+        if (isLoading) const LoadingIndicator(),
+      ],
     );
   }
 
@@ -34,9 +90,8 @@ class ProfileView extends StatelessWidget {
     }
   }
 
-
   // 👤 معلومات المستخدم العامة
-  Widget _buildUserInfo(UserModel user) {
+  Widget _buildUserInfo(UserProfileModel user) {
     return Column(
       children: [
         _infoCard("اسم المستخدم", user.username),
@@ -96,8 +151,14 @@ class ProfileView extends StatelessWidget {
         _buildUserInfo(parent.user),
         _infoCard("المهنة", parent.occupation),
         _infoCard("جهة الاتصال في حالة الطوارئ", parent.emergencyContact),
-        _infoCard("الإشعارات عبر البريد", parent.emailNotifications ? "مفعل" : "غير مفعّل"),
-        _infoCard("الإشعارات عبر الرسائل", parent.smsNotifications ? "مفعل" : "غير مفعّل"),
+        _infoCard(
+          "الإشعارات عبر البريد",
+          parent.emailNotifications ? "مفعل" : "غير مفعّل",
+        ),
+        _infoCard(
+          "الإشعارات عبر الرسائل",
+          parent.smsNotifications ? "مفعل" : "غير مفعّل",
+        ),
         _infoCard("عدد الأبناء", "${parent.children.length}"),
       ],
     );

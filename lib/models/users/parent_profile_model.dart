@@ -1,5 +1,5 @@
-import 'package:study_platform/models/authentication/user_model.dart';
 import 'package:study_platform/models/users/base_profile_model.dart';
+import 'package:study_platform/models/users/user_profile_model.dart';
 
 class ParentProfileModel extends BaseProfileModel {
   final String children;
@@ -23,7 +23,7 @@ class ParentProfileModel extends BaseProfileModel {
   factory ParentProfileModel.fromJson(Map<String, dynamic> json) {
     return ParentProfileModel(
       id: json["id"],
-      user: UserModel.fromJson(json["user"]),
+      user: UserProfileModel.fromJson(json["user"]),
       createdAt: json["created_at"] ?? "",
       updatedAt: json["updated_at"] ?? "",
       children: json["children"] ?? "",
