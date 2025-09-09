@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:study_platform/helper/storage_service.dart';
 import 'package:study_platform/views/parent_views/parent_dashboard_view.dart';
 import 'package:study_platform/views/register_view.dart';
-import 'package:study_platform/views/student_views/student_dashboard_view.dart';
+import 'package:study_platform/views/student_views/student_bottom_nav.dart';
 import 'package:study_platform/views/teacher_views/teacher_dashboard_view.dart';
 
 void main() async {
@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
     } else {
       switch (userType) {
         case "student":
-          home = const StudentDashboardView();
+          home = const StudentBottomNav();
           break;
         case "teacher":
           home = const TeacherDashboardView();
