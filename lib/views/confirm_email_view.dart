@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:study_platform/helper/storage_service.dart';
 import 'package:study_platform/helper/validators.dart';
 import 'package:study_platform/services/authentication/register_service.dart';
 import 'package:study_platform/services/authentication/resend_ver_code_service.dart';
 import 'package:study_platform/views/home_view.dart';
+import 'package:study_platform/views/parent_views/parent_dashboard_view.dart';
+import 'package:study_platform/views/student_views/student_dashboard_view.dart';
+import 'package:study_platform/views/teacher_views/teacher_dashboard_view.dart';
 import 'package:study_platform/widgets/custom_text_field.dart';
 import 'package:study_platform/widgets/loading_indecator.dart';
 
@@ -16,6 +20,7 @@ class ConfirmEmailView extends StatefulWidget {
 class _ConfirmEmailViewState extends State<ConfirmEmailView> {
   final formkey = GlobalKey<FormState>();
   AutovalidateMode autovalidateMode = AutovalidateMode.disabled;
+  final StorageService storageService = StorageService();
   String? otp;
   bool isLoading = false;
 
@@ -75,10 +80,30 @@ class _ConfirmEmailViewState extends State<ConfirmEmailView> {
               const SnackBar(content: Text("✅ Registration Successful")),
             );
 
+            final userType = await storageService.getUserType();
+            if (userType == null) {
+              throw Exception("❌ No user type found, please login again.");
+            }
+
+            Widget dashboardPage;
+            switch (userType) {
+              case "student":
+                dashboardPage = const StudentDashboardView();
+                break;
+              case "teacher":
+                dashboardPage = const TeacherDashboardView();
+                break;
+              case "parent":
+                dashboardPage = const ParentDashboardView();
+                break;
+              default:
+                dashboardPage = const HomeView(); // fallback لو حاجة مش متوقعة
+            }
+
             Navigator.pushAndRemoveUntil(
               context,
-              MaterialPageRoute(builder: (context) => const HomeView()),
-              (route) => false, // false = ميخليش أي صفحة قديمة
+              MaterialPageRoute(builder: (_) => dashboardPage),
+              (route) => false,
             );
 
 

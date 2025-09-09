@@ -3,7 +3,7 @@ class ApiConstants {
   static const String baseUrl =
       "https://educational-platform-git-main-youssefs-projects-e2c35ebf.vercel.app";
 
-  // مسارات الـ Endpoints
+  // user Endpoints
   static const String login = "$baseUrl/user/login/";
   static const String register = "$baseUrl/user/register/";
   static const String verifyEmail = "$baseUrl/user/verify-email";
@@ -18,4 +18,7 @@ class ApiConstants {
   static const String studentProfile = "$baseUrl/user/profile/student/";
   static const String parentProfile = "$baseUrl/user/profile/parent/";
   static const String teacherProfile = "$baseUrl/user/profile/teacher/";
+
+  // student endpoints
+  static const String studentDashboard = "$baseUrl/student/dashboard/";
 }

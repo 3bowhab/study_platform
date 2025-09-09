@@ -1,25 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:study_platform/helper/storage_service.dart';
-import 'package:study_platform/views/home_view.dart';
+import 'package:study_platform/views/parent_views/parent_dashboard_view.dart';
 import 'package:study_platform/views/register_view.dart';
+import 'package:study_platform/views/student_views/student_dashboard_view.dart';
+import 'package:study_platform/views/teacher_views/teacher_dashboard_view.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  final loggedIn = await StorageService().isLoggedIn();
+  final storage = StorageService();
+  final loggedIn = await storage.isLoggedIn();
+  final userType = await storage.getUserType();
 
-  runApp(MyApp(loggedIn: loggedIn));
+  runApp(MyApp(loggedIn: loggedIn, userType: userType));
 }
 
 class MyApp extends StatelessWidget {
   final bool loggedIn;
-  const MyApp({super.key, required this.loggedIn});
+  final String? userType;
+  const MyApp({super.key, required this.loggedIn, this.userType});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Study Platform',
-      home: loggedIn ? const HomeView() : const RegisterView(),
-    );
+    Widget home;
+
+    if (!loggedIn) {
+      home = const RegisterView();
+    } else {
+      switch (userType) {
+        case "student":
+          home = const StudentDashboardView();
+          break;
+        case "teacher":
+          home = const TeacherDashboardView();
+          break;
+        case "parent":
+          home = const ParentDashboardView();
+          break;
+        default:
+          home = const RegisterView(); // fallback لو في حاجة غلط
+      }
+    }
+
+    return MaterialApp(title: 'Study Platform', home: home);
   }
 }
