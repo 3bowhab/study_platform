@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:study_platform/models/student_models/course_response.dart';
-// import 'package:study_platform/models/student_models/course_model.dart';
+import 'package:study_platform/models/student_models/quiz_model.dart';
 import 'package:study_platform/models/student_models/section_model.dart';
 import 'package:study_platform/services/student/course_details_service.dart';
+import 'package:study_platform/services/student/quiz_service.dart';
+import 'package:study_platform/views/student_views/quiz_attempt_view.dart';
 
 class CourseDetailsView extends StatefulWidget {
   final int courseId;
@@ -15,6 +17,7 @@ class CourseDetailsView extends StatefulWidget {
 
 class _CourseDetailsViewState extends State<CourseDetailsView> {
   final CourseDetailsService _courseDetailsService = CourseDetailsService();
+  final QuizService _quizService = QuizService();
 
   CourseResponse? course;
   bool isLoading = true;
@@ -31,11 +34,13 @@ class _CourseDetailsViewState extends State<CourseDetailsView> {
       final data = await _courseDetailsService.getCourseDetails(
         widget.courseId,
       );
+      if (!mounted) return;
       setState(() {
         course = data;
         isLoading = false;
       });
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         error = e.toString();
         isLoading = false;
@@ -43,7 +48,32 @@ class _CourseDetailsViewState extends State<CourseDetailsView> {
     }
   }
 
-Widget _buildSection(SectionModel section) {
+  Future<void> _openQuiz(int sectionId, QuizModel quiz) async {
+    try {
+      final quizData = await _quizService.getQuiz(
+        courseId: widget.courseId,
+        sectionId: sectionId,
+        quizId: quiz.id,
+      );
+
+      if (!mounted) return;
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => QuizAttemptView(
+          courseId: widget.courseId,
+          sectionId: sectionId,
+          quiz: quizData.copyWith(id: quiz.id),
+        )),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("❌ Failed to load quiz: $e")));
+    }
+  }
+
+  Widget _buildSection(SectionModel section) {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 6),
       child: ExpansionTile(
@@ -78,30 +108,15 @@ Widget _buildSection(SectionModel section) {
               child: Text("PDF: ${section.pdfFile}"),
             ),
           if (section.hasQuiz && section.quiz != null)
-            ExpansionTile(
-              title: Text("Quiz: ${section.quiz!.title}"),
-              children:
-                  section.quiz!.questions.map((q) {
-                    return ExpansionTile(
-                      title: Text("Q: ${q.questionText}"),
-                      children:
-                          q.choices
-                              .map(
-                                (c) => ListTile(
-                                  title: Text(
-                                    "${c.choiceText} ${c.isCorrect ? '(Correct)' : ''}",
-                                  ),
-                                ),
-                              )
-                              .toList(),
-                    );
-                  }).toList(),
+            ListTile(
+              title: Text("📝 Quiz: ${section.quiz!.title}"),
+              trailing: const Icon(Icons.arrow_forward_ios, size: 18),
+              onTap: () => _openQuiz(section.id, section.quiz!),
             ),
         ],
       ),
     );
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -142,11 +157,42 @@ Widget _buildSection(SectionModel section) {
                       ),
                     ),
                     const SizedBox(height: 10),
-                     ...course!.course.sections.map((section) => _buildSection(section)),
-
+                    ...course!.course.sections.map(
+                      (section) => _buildSection(section),
+                    ),
                   ],
                 ),
               ),
     );
   }
 }
+
+/// صفحة تعرض تفاصيل الكويز بعد ما نجيبه من السيرفس
+// class QuizDetailsView extends StatelessWidget {
+//   final QuizModel quiz;
+
+//   const QuizDetailsView({super.key, required this.quiz});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(title: Text("Quiz: ${quiz.title}")),
+//       body: ListView(
+//         padding: const EdgeInsets.all(16),
+//         children:
+//             quiz.questions.map((q) {
+//               return Card(
+//                 margin: const EdgeInsets.symmetric(vertical: 8),
+//                 child: ExpansionTile(
+//                   title: Text("Q: ${q.questionText}"),
+//                   children:
+//                       q.choices
+//                           .map((c) => ListTile(title: Text(c.choiceText)))
+//                           .toList(),
+//                 ),
+//               );
+//             }).toList(),
+//       ),
+//     );
+//   }
+// }
