@@ -4,6 +4,7 @@ class ApiConstants {
       "https://educational-platform-git-main-youssefs-projects-e2c35ebf.vercel.app";
 
   // user Endpoints
+  static const String refreshToken = "$baseUrl/user/token/refresh/";
   static const String login = "$baseUrl/user/login/";
   static const String register = "$baseUrl/user/register/";
   static const String verifyEmail = "$baseUrl/user/verify-email";
@@ -25,4 +26,5 @@ class ApiConstants {
   static const String studentEnrollments = "$baseUrl/student/enrollments/";
   static const String studentEnrollTemporaryBase = "$baseUrl/student/enroll/temporary/";
   static const String studentMyCourses = "$baseUrl/student/my-courses/";
+  static const String studentCourseInfo = "$baseUrl/student/course/";
 }

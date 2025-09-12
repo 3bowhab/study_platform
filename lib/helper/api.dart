@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
-import 'package:study_platform/services/authentication/refresh_token_service.dart';
 
 // ignore_for_file: avoid_print
 
@@ -29,21 +28,12 @@ class Api {
       return response.data;
     } on DioException catch (e) {
       _handleDioError(e);
-
-      // 🟢 Refresh token retry
-      if (e.response?.statusCode == 401) {
-        final newToken = await RefreshTokenService().refreshAccessToken();
-        if (newToken != null) {
-          return await get(url: url, token: newToken);
-        }
-      }
       rethrow;
     } catch (e) {
       print('❌ [GET UNEXPECTED ERROR] $e');
       throw Exception("Unexpected Error: $e");
     }
   }
-
 
   Future<dynamic> post({
     required String url,
@@ -73,20 +63,12 @@ class Api {
       return response.data;
     } on DioException catch (e) {
       _handleDioError(e);
-
-      if (e.response?.statusCode == 401) {
-        final newToken = await RefreshTokenService().refreshAccessToken();
-        if (newToken != null) {
-          return await post(url: url, body: body, token: newToken);
-        }
-      }
       rethrow;
     } catch (e) {
       print('❌ [POST UNEXPECTED ERROR] $e');
       throw Exception("Unexpected Error: $e");
     }
   }
-
 
   Future<dynamic> put({
     required String url,
@@ -116,13 +98,6 @@ class Api {
       return response.data;
     } on DioException catch (e) {
       _handleDioError(e);
-
-      if (e.response?.statusCode == 401) {
-        final newToken = await RefreshTokenService().refreshAccessToken();
-        if (newToken != null) {
-          return await put(url: url, body: body, token: newToken);
-        }
-      }
       rethrow;
     } catch (e) {
       print('❌ [PUT UNEXPECTED ERROR] $e');
@@ -158,14 +133,6 @@ class Api {
       return response.data;
     } on DioException catch (e) {
       _handleDioError(e);
-
-      // 🟢 Refresh token retry
-      if (e.response?.statusCode == 401) {
-        final newToken = await RefreshTokenService().refreshAccessToken();
-        if (newToken != null) {
-          return await patch(url: url, body: body, token: newToken);
-        }
-      }
       rethrow;
     } catch (e) {
       print('❌ [PATCH UNEXPECTED ERROR] $e');
@@ -209,25 +176,12 @@ class Api {
       return response.data;
     } on DioException catch (e) {
       _handleDioError(e);
-
-      if (e.response?.statusCode == 401) {
-        final newToken = await RefreshTokenService().refreshAccessToken();
-        if (newToken != null) {
-          return await postMultipart(
-            url: url,
-            fileField: fileField,
-            file: file,
-            token: newToken,
-          );
-        }
-      }
       rethrow;
     } catch (e) {
       print('❌ [MULTIPART UNEXPECTED ERROR] $e');
       throw Exception("Unexpected Error: $e");
     }
   }
-
 
   // 🔹 Helper function لتوحيد التعامل مع Errors
   void _handleDioError(DioException e) {

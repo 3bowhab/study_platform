@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:study_platform/models/student_models/couse_model.dart';
+import 'package:study_platform/models/student_models/course_model.dart';
 import 'package:study_platform/services/student/post_enrollment_service.dart';
 import 'package:study_platform/services/student/student_courses_service.dart';
 

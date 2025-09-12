@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:study_platform/models/student_models/enrollment_model.dart';
-import 'package:study_platform/models/student_models/couse_model.dart';
+import 'package:study_platform/models/student_models/course_model.dart';
 import 'package:study_platform/models/student_models/my_courses_service.dart';
 import 'package:study_platform/services/student/get_enrollment_service.dart';
+import 'package:study_platform/views/student_views/course_details_view.dart';
 
 class StudentEnrollmentsView extends StatefulWidget {
   const StudentEnrollmentsView({super.key});
@@ -156,6 +157,15 @@ class _StudentEnrollmentsViewState extends State<StudentEnrollmentsView> {
                     subtitle: Text(
                       "👨‍🏫 ${course.teacherName} • ${course.difficulty}",
                     ),
+                      onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (_) => CourseDetailsView(courseId: course.id),
+                        ),
+                      );
+                    },
                   ),
                 ),
               ),

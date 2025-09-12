@@ -1,10 +1,14 @@
+import 'dart:async';
 import 'package:study_platform/helper/api.dart';
 import 'package:study_platform/helper/storage_service.dart';
+import 'package:study_platform/helper/api_constants.dart';
 
 class RefreshTokenService {
   final Api api = Api();
   final StorageService storageService = StorageService();
+  Timer? _timer;
 
+  /// 🔹 استدعاء لمرة واحدة لتجديد التوكن
   Future<String?> refreshAccessToken() async {
     try {
       final refresh = await storageService.getRefreshToken();
@@ -16,17 +20,15 @@ class RefreshTokenService {
       }
 
       final response = await api.post(
-        url:
-            "https://educational-platform-qg3zn6tpl-youssefs-projects-e2c35ebf.vercel.app/user/token/refresh/",
+        url: ApiConstants.refreshToken,
         body: {"refresh": refresh},
         token: null,
       );
 
       final newAccess = response["access"];
-      final newRefresh = response["refresh"] ?? refresh;
 
       if (newAccess != null) {
-        await storageService.resetTokens(newAccess, newRefresh);
+        await storageService.resetTokens(newAccess);
         print("✅ Access token refreshed successfully");
         return newAccess;
       } else {
@@ -38,5 +40,22 @@ class RefreshTokenService {
       await storageService.logout();
       return null;
     }
+  }
+
+  /// 🔹 تشغيل التجديد التلقائي كل 5 دقايق
+  void startAutoRefresh() {
+    // لو فيه تايمر قديم، نوقفه
+    _timer?.cancel();
+
+    _timer = Timer.periodic(const Duration(minutes: 5), (timer) async {
+      print("⏳ Auto refreshing token...");
+      await refreshAccessToken();
+    });
+  }
+
+  /// 🔹 إيقاف التجديد التلقائي (مثلاً عند تسجيل الخروج)
+  void stopAutoRefresh() {
+    _timer?.cancel();
+    _timer = null;
   }
 }

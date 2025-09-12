@@ -1,4 +1,4 @@
-import 'package:study_platform/models/student_models/couse_model.dart';
+import 'package:study_platform/models/student_models/course_model.dart';
 
 class EnrollmentModel {
   final int id;

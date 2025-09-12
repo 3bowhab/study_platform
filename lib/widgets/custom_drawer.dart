@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:study_platform/helper/storage_service.dart';
+import 'package:study_platform/services/authentication/refresh_token_service.dart';
 import 'package:study_platform/services/settings/logout_service.dart';
 import 'package:study_platform/views/Drawer_views/settings_view.dart';
 import 'package:study_platform/views/Drawer_views/account_view.dart';
@@ -54,6 +55,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
       onTap: () async {
         // مسح البيانات
         await StorageService().logout();
+        RefreshTokenService().stopAutoRefresh();
 
         // اقفل الـ Drawer
         Navigator.of(context).pop();
@@ -69,21 +71,26 @@ class _CustomDrawerState extends State<CustomDrawer> {
   }
 
   DrawerHeader customDrawerHeader() {
-    return DrawerHeader(
-      decoration: BoxDecoration(color: Colors.blue),
-      child: FutureBuilder(
-        future: Future.wait([
-          StorageService().getFullName(),
-          StorageService().getEmail(),
-        ]),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const CircularProgressIndicator(color: Colors.white);
-          }
-          final fullName = snapshot.data?[0] ?? "Guest";
-          final email = snapshot.data?[1] ?? "No Email";
+  return DrawerHeader(
+    decoration: const BoxDecoration(color: Colors.blue),
+    child: FutureBuilder(
+      future: Future.wait([
+        StorageService().getFullName(),
+        StorageService().getEmail(),
+      ]),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator(color: Colors.white);
+        }
+        final fullName = snapshot.data?[0] ?? "Guest";
+        final email = snapshot.data?[1] ?? "No Email";
 
-          return Column(
+        return GestureDetector(
+          onTap: () async {
+            final token = await StorageService().getAccessToken();
+            print("📌 Stored Token: $token");
+          },
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -97,10 +104,11 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 style: const TextStyle(color: Colors.white70, fontSize: 14),
               ),
             ],
-          );
-        },
-      ),
-    );
+          ),
+        );
+      },
+    ),
+  );
   }
 }
 
@@ -128,6 +136,7 @@ ListTile logoutTile(BuildContext context) {
                 try {
                   await LogoutService().logout();
                   await StorageService().logout();
+                  RefreshTokenService().stopAutoRefresh();
 
                   // ✅ امسح أي شاشات سابقة ورجع للـ RegisterView
                   Future.microtask(() {

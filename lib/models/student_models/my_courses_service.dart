@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:study_platform/helper/api.dart';
 import 'package:study_platform/helper/api_constants.dart';
 import 'package:study_platform/helper/storage_service.dart';
-import 'package:study_platform/models/student_models/couse_model.dart';
+import 'package:study_platform/models/student_models/course_model.dart';
 
 class MyCoursesService {
   final Api _api = Api();

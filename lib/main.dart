@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:study_platform/helper/storage_service.dart';
+import 'package:study_platform/services/authentication/refresh_token_service.dart';
 import 'package:study_platform/views/parent_views/parent_dashboard_view.dart';
 import 'package:study_platform/views/register_view.dart';
 import 'package:study_platform/views/student_views/student_bottom_nav.dart';
@@ -13,6 +15,11 @@ void main() async {
   final userType = await storage.getUserType();
 
   runApp(MyApp(loggedIn: loggedIn, userType: userType));
+
+  // ⏳ شغل ريفرش التوكن كل 5 دقايق
+  if (loggedIn) {
+    RefreshTokenService().startAutoRefresh();
+  }
 }
 
 class MyApp extends StatelessWidget {
