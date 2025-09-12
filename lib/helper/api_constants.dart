@@ -22,4 +22,7 @@ class ApiConstants {
   // student endpoints
   static const String studentDashboard = "$baseUrl/student/dashboard/";
   static const String studentGetAllCourses = "$baseUrl/student/get-all-courses/";
+  static const String studentEnrollments = "$baseUrl/student/enrollments/";
+  static const String studentEnrollTemporaryBase = "$baseUrl/student/enroll/temporary/";
+  static const String studentMyCourses = "$baseUrl/student/my-courses/";
 }

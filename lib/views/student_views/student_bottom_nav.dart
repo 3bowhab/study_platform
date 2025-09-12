@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:study_platform/views/student_views/student_courses_view.dart';
 import 'package:study_platform/views/student_views/student_dashboard_view.dart';
+import 'package:study_platform/views/student_views/student_enrollments_view.dart';
 
 class StudentBottomNav extends StatefulWidget {
   const StudentBottomNav({super.key});
@@ -15,6 +16,7 @@ class _StudentBottomNavState extends State<StudentBottomNav> {
   final List<Widget> _pages = const [
     StudentDashboardView(),
     StudentCoursesView(),
+    StudentEnrollmentsView(), // ✅ الصفحة الجديدة
   ];
 
   @override
@@ -34,6 +36,10 @@ class _StudentBottomNavState extends State<StudentBottomNav> {
             label: "Dashboard",
           ),
           BottomNavigationBarItem(icon: Icon(Icons.book), label: "Courses"),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.school), // 🎓 أيقونة للاشتراكات
+            label: "Enrollments",
+          ),
         ],
       ),
     );

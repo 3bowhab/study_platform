@@ -5,7 +5,7 @@ import 'package:study_platform/services/authentication/register_service.dart';
 import 'package:study_platform/services/authentication/resend_ver_code_service.dart';
 import 'package:study_platform/views/home_view.dart';
 import 'package:study_platform/views/parent_views/parent_dashboard_view.dart';
-import 'package:study_platform/views/student_views/student_dashboard_view.dart';
+import 'package:study_platform/views/student_views/student_bottom_nav.dart';
 import 'package:study_platform/views/teacher_views/teacher_dashboard_view.dart';
 import 'package:study_platform/widgets/custom_text_field.dart';
 import 'package:study_platform/widgets/loading_indecator.dart';
@@ -88,7 +88,7 @@ class _ConfirmEmailViewState extends State<ConfirmEmailView> {
             Widget dashboardPage;
             switch (userType) {
               case "student":
-                dashboardPage = const StudentDashboardView();
+                dashboardPage = const StudentBottomNav();
                 break;
               case "teacher":
                 dashboardPage = const TeacherDashboardView();
