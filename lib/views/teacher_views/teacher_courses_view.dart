@@ -3,8 +3,8 @@ import 'package:study_platform/models/student_models/course_model.dart';
 import 'package:study_platform/services/teacher/teacher_courses_service.dart';
 import 'package:study_platform/views/teacher_views/add_course_view.dart';
 import 'package:study_platform/views/teacher_views/teacher_sections_view.dart';
+import 'package:study_platform/views/teacher_views/edit_course_view.dart';
 import 'package:study_platform/widgets/custom_drawer.dart';
-
 
 class TeacherCoursesView extends StatefulWidget {
   const TeacherCoursesView({super.key});
@@ -64,55 +64,76 @@ class _TeacherCoursesViewState extends State<TeacherCoursesView> {
             return const Center(child: Text("No courses found."));
           }
 
-          return ListView.builder(
-            itemCount: courses.length,
-            itemBuilder: (context, index) {
-              final course = courses[index];
-              return Card(
-                margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                child: ListTile(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => TeacherSectionsView(course: course),
-                      ),
-                    );
-                  },
-                  leading:
-                      course.thumbnail != null
-                          ? Image.network(
-                            course.thumbnail!,
-                            width: 60,
-                            fit: BoxFit.cover,
-                          )
-                          : const Icon(Icons.book, size: 40),
-                  title: Text(
-                    course.title,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+          return RefreshIndicator(
+            onRefresh: _refreshCourses,
+            child: ListView.builder(
+              itemCount: courses.length,
+              itemBuilder: (context, index) {
+                final course = courses[index];
+                return Card(
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
                   ),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(course.description),
-                      Text("👨‍🏫 Teacher: ${course.teacherName}"),
-                      Text("📌 Status: ${course.status}"),
-                      Text("🎯 Difficulty: ${course.difficulty}"),
-                      Text("🕒 Duration: ${course.durationHours} hrs"),
-                      Text(
-                        "📚 Sections: ${course.totalSections}, Quizzes: ${course.totalQuizzes}",
-                      ),
-                      Text("👥 Enrollments: ${course.totalEnrollments}"),
-                      Text("⭐ Avg Rating: ${course.averageRating}"),
-                      Text("📅 Created: ${course.createdAt}"),
-                      Text("📝 Updated: ${course.updatedAt}"),
-                    ],
+                  child: ListTile(
+                    onTap: () {
+                      // 🟢 فتح السكاشن
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => TeacherSectionsView(course: course),
+                        ),
+                      );
+                    },
+                    leading:
+                        course.thumbnail != null
+                            ? Image.network(
+                              course.thumbnail!,
+                              width: 60,
+                              fit: BoxFit.cover,
+                            )
+                            : const Icon(Icons.book, size: 40),
+                    title: Text(
+                      course.title,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(course.description),
+                        Text("👨‍🏫 Teacher: ${course.teacherName}"),
+                        Text("📌 Status: ${course.status}"),
+                        Text("🎯 Difficulty: ${course.difficulty}"),
+                        Text("🕒 Duration: ${course.durationHours} hrs"),
+                        Text(
+                          "📚 Sections: ${course.totalSections}, Quizzes: ${course.totalQuizzes}",
+                        ),
+                        Text("👥 Enrollments: ${course.totalEnrollments}"),
+                        Text("⭐ Avg Rating: ${course.averageRating}"),
+                        Text("📅 Created: ${course.createdAt}"),
+                        Text("📝 Updated: ${course.updatedAt}"),
+                      ],
+                    ),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.edit, color: Colors.blue),
+                      tooltip: "Edit Course",
+                      onPressed: () async {
+                        final updated = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => EditCourseView(course: course),
+                          ),
+                        );
+                        if (updated == true) {
+                          _refreshCourses(); // 🟢 refresh بعد التعديل أو الحذف
+                        }
+                      },
+                    ),
+                    isThreeLine: true,
                   ),
-                  trailing: Text("\$${course.price.toStringAsFixed(2)}"),
-                  isThreeLine: true,
-                ),
-              );
-            },
+                );
+              },
+            ),
           );
         },
       ),

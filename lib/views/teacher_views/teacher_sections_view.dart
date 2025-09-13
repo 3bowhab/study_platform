@@ -3,6 +3,7 @@ import 'package:study_platform/models/student_models/course_model.dart';
 import 'package:study_platform/models/student_models/section_model.dart';
 import 'package:study_platform/services/teacher/teacher_sections_service.dart';
 import 'package:study_platform/views/teacher_views/add_section_view.dart';
+import 'package:study_platform/views/teacher_views/edit_section_view.dart';
 
 class TeacherSectionsView extends StatefulWidget {
   final CourseModel course;
@@ -97,6 +98,22 @@ class _TeacherSectionsViewState extends State<TeacherSectionsView> {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.edit, color: Colors.grey),
+                              onPressed: () async {
+                                final updated = await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder:
+                                        (_) =>
+                                            EditSectionView(section: section),
+                                  ),
+                                );
+                                if (updated == true) {
+                                  _refreshSections();
+                                }
+                              },
                             ),
                           ],
                         ),

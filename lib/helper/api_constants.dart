@@ -30,4 +30,6 @@ class ApiConstants {
 
   // teacher endpoints
   static const String teacherCourses = "$baseUrl/teacher/courses/";
+  static const String teacherSections = "$baseUrl/teacher/sections/";
+  static const String teacherQuizzes = "$baseUrl/teacher/quizzes/";
 }

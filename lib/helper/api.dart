@@ -192,4 +192,34 @@ class Api {
       print('❌ Data: ${e.response?.data}');
     }
   }
+
+
+  Future<dynamic> delete({required String url, required String? token}) async {
+    try {
+      Map<String, String> headers = {};
+      if (token != null) {
+        headers['Authorization'] = 'Bearer $token';
+      }
+
+      print('📌 [DELETE REQUEST]');
+      print('➡️ URL: $url');
+      print('➡️ Headers: ${headers.toString()}');
+
+      Response response = await dio.delete(
+        url,
+        options: Options(headers: headers),
+      );
+
+      print('✅ [DELETE SUCCESS] ${response.statusCode}');
+      print('📦 Data: ${response.data}');
+
+      return response.data;
+    } on DioException catch (e) {
+      _handleDioError(e);
+      rethrow;
+    } catch (e) {
+      print('❌ [DELETE UNEXPECTED ERROR] $e');
+      throw Exception("Unexpected Error: $e");
+    }
+  }
 }
