@@ -15,6 +15,9 @@ class CourseModel {
   final int totalQuizzes;
   final int totalEnrollments;
   final int totalViews;
+  final double averageRating;
+  final String createdAt;
+  final String updatedAt;
   final List<SectionModel> sections;
 
   CourseModel({
@@ -31,6 +34,9 @@ class CourseModel {
     required this.totalQuizzes,
     required this.totalEnrollments,
     required this.totalViews,
+    required this.averageRating,
+    required this.createdAt,
+    required this.updatedAt,
     required this.sections,
   });
 
@@ -49,6 +55,9 @@ class CourseModel {
       totalQuizzes: parseInt(json['total_quizzes']),
       totalEnrollments: parseInt(json['total_enrollments']),
       totalViews: parseInt(json['total_views']),
+      averageRating: parseDouble(json['average_rating']),
+      createdAt: json['created_at'] ?? '',
+      updatedAt: json['updated_at'] ?? '',
       sections:
           (json['sections'] as List? ?? [])
               .map((e) => SectionModel.fromJson(e))
@@ -70,6 +79,9 @@ class CourseModel {
     "total_quizzes": totalQuizzes,
     "total_enrollments": totalEnrollments,
     "total_views": totalViews,
+    "average_rating": averageRating,
+    "created_at": createdAt,
+    "updated_at": updatedAt,
     "sections": sections.map((e) => e.toJson()).toList(),
   };
 }

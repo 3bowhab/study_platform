@@ -1,11 +1,10 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:study_platform/helper/storage_service.dart';
 import 'package:study_platform/services/authentication/refresh_token_service.dart';
 import 'package:study_platform/views/parent_views/parent_dashboard_view.dart';
 import 'package:study_platform/views/register_view.dart';
 import 'package:study_platform/views/student_views/student_bottom_nav.dart';
-import 'package:study_platform/views/teacher_views/teacher_dashboard_view.dart';
+import 'package:study_platform/views/teacher_views/teacher_home_view.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -44,7 +43,7 @@ class MyApp extends StatelessWidget {
           home = const StudentBottomNav();
           break;
         case "teacher":
-          home = const TeacherDashboardView();
+          home = const TeacherHomeView();
           break;
         case "parent":
           home = const ParentDashboardView();

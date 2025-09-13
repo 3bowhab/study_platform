@@ -9,7 +9,7 @@ import 'package:study_platform/views/home_view.dart';
 import 'package:study_platform/views/parent_views/parent_dashboard_view.dart';
 import 'package:study_platform/views/register_view.dart';
 import 'package:study_platform/views/student_views/student_bottom_nav.dart';
-import 'package:study_platform/views/teacher_views/teacher_dashboard_view.dart';
+import 'package:study_platform/views/teacher_views/teacher_home_view.dart';
 import 'package:study_platform/widgets/custom_text_field.dart';
 import 'package:study_platform/widgets/loading_indecator.dart';
 
@@ -133,7 +133,7 @@ class _LoginViewState extends State<LoginView> {
                 dashboardPage = const StudentBottomNav();
                 break;
               case "teacher":
-                dashboardPage = const TeacherDashboardView();
+                dashboardPage = const TeacherHomeView();
                 break;
               case "parent":
                 dashboardPage = const ParentDashboardView();
