@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:study_platform/models/student_models/course_model.dart';
 import 'package:study_platform/services/teacher/teacher_courses_service.dart';
 import 'package:study_platform/views/teacher_views/add_course_view.dart';
+import 'package:study_platform/views/teacher_views/teacher_sections_view.dart';
 import 'package:study_platform/widgets/custom_drawer.dart';
 
 
@@ -70,6 +71,14 @@ class _TeacherCoursesViewState extends State<TeacherCoursesView> {
               return Card(
                 margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 child: ListTile(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => TeacherSectionsView(course: course),
+                      ),
+                    );
+                  },
                   leading:
                       course.thumbnail != null
                           ? Image.network(
@@ -94,7 +103,7 @@ class _TeacherCoursesViewState extends State<TeacherCoursesView> {
                         "📚 Sections: ${course.totalSections}, Quizzes: ${course.totalQuizzes}",
                       ),
                       Text("👥 Enrollments: ${course.totalEnrollments}"),
-                      Text("⭐ Avg Rating: ${course.averageRating ?? 'N/A'}"),
+                      Text("⭐ Avg Rating: ${course.averageRating}"),
                       Text("📅 Created: ${course.createdAt}"),
                       Text("📝 Updated: ${course.updatedAt}"),
                     ],

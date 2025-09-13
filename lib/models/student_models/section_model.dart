@@ -14,6 +14,8 @@ class SectionModel {
   final int totalViews;
   final QuizModel? quiz;
   final bool hasQuiz;
+  final String createdAt;
+  final String updatedAt;
 
   SectionModel({
     required this.id,
@@ -28,6 +30,8 @@ class SectionModel {
     required this.totalViews,
     this.quiz,
     required this.hasQuiz,
+    required this.createdAt,
+    required this.updatedAt,
   });
 
   factory SectionModel.fromJson(Map<String, dynamic> json) {
@@ -44,6 +48,8 @@ class SectionModel {
       totalViews: parseInt(json['total_views']),
       quiz: json['quiz'] != null ? QuizModel.fromJson(json['quiz']) : null,
       hasQuiz: json['has_quiz'] ?? false,
+      createdAt: json['created_at'] ?? '',
+      updatedAt: json['updated_at'] ?? '',
     );
   }
 
@@ -60,5 +66,7 @@ class SectionModel {
     "total_views": totalViews,
     "quiz": quiz?.toJson(),
     "has_quiz": hasQuiz,
+    "created_at": createdAt,
+    "updated_at": updatedAt,
   };
 }
