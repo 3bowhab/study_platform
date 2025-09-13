@@ -61,27 +61,27 @@ class _RegisterUserTypeState extends State<RegisterUserType> {
           },
         ),
 
-        if (userType == "parent") ...[
-          const SizedBox(height: 16),
-          TextFormField(
-            decoration: const InputDecoration(
-              labelText: "اسم المستخدم للابن",
-              border: OutlineInputBorder(),
-            ),
-            onChanged: (val) {
-              setState(() {
-                childUsername = val;
-              });
-              widget.onUserTypeSelected(userType!, childUsername);
-            },
-            validator: (val) {
-              if (userType == "parent" && (val == null || val.isEmpty)) {
-                return "برجاء إدخال اسم الابن";
-              }
-              return null;
-            },
-          ),
-        ],
+        // if (userType == "parent") ...[
+        //   const SizedBox(height: 16),
+        //   TextFormField(
+        //     decoration: const InputDecoration(
+        //       labelText: "اسم المستخدم للابن",
+        //       border: OutlineInputBorder(),
+        //     ),
+        //     onChanged: (val) {
+        //       setState(() {
+        //         childUsername = val;
+        //       });
+        //       widget.onUserTypeSelected(userType!, childUsername);
+        //     },
+        //     validator: (val) {
+        //       if (userType == "parent" && (val == null || val.isEmpty)) {
+        //         return "برجاء إدخال اسم الابن";
+        //       }
+        //       return null;
+        //     },
+        //   ),
+        // ],
       ],
     );
   }

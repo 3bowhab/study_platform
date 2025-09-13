@@ -4,10 +4,11 @@ import 'package:study_platform/services/authentication/refresh_token_service.dar
 import 'package:study_platform/services/settings/logout_service.dart';
 import 'package:study_platform/views/Drawer_views/settings_view.dart';
 import 'package:study_platform/views/Drawer_views/account_view.dart';
+import 'package:study_platform/views/parent_views/link_child_view.dart';
 import 'package:study_platform/views/register_view.dart';
 
 class CustomDrawer extends StatefulWidget {
- CustomDrawer({super.key});
+  CustomDrawer({super.key});
 
   @override
   State<CustomDrawer> createState() => _CustomDrawerState();
@@ -17,59 +18,87 @@ class _CustomDrawerState extends State<CustomDrawer> {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero, // يخلي العناصر تبدأ من فوق
-        children: [
-          customDrawerHeader(),
-          ListTile(
-            leading: const Icon(Icons.settings),
-            title: const Text('الحساب'),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const AccountView()),
-              );
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.person),
-            title: const Text('الإعدادات'),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => SettingsView()),
-              );
-            },
-          ),
-          logoutTile(context),
-        ],
+      child: FutureBuilder<String?>(
+        future: StorageService().getUserType(), // نجيب نوع المستخدم
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          final userType = snapshot.data ?? "";
+
+          return ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              customDrawerHeader(),
+              ListTile(
+                leading: const Icon(Icons.settings),
+                title: const Text('الحساب'),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const AccountView(),
+                    ),
+                  );
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.person),
+                title: const Text('الإعدادات'),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => SettingsView()),
+                  );
+                },
+              ),
+
+              // ✅ لو اليوزر parent نضيف التايل الجديدة
+              if (userType.toLowerCase() == "parent")
+                ListTile(
+                  leading: const Icon(Icons.family_restroom),
+                  title: const Text('حساب الابن'),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => LinkChildView()),
+                    );
+                  },
+                ),
+
+              logoutTile(context),
+            ],
+          );
+        },
       ),
     );
   }
+}
 
-  ListTile logoutWithoutService(BuildContext context) {
-    return ListTile(
-      leading: const Icon(Icons.logout),
-      title: const Text('تسجيل الخروج'),
-      onTap: () async {
-        // مسح البيانات
-        await StorageService().logout();
-        RefreshTokenService().stopAutoRefresh();
+ListTile logoutWithoutService(BuildContext context) {
+  return ListTile(
+    leading: const Icon(Icons.logout),
+    title: const Text('تسجيل الخروج'),
+    onTap: () async {
+      // مسح البيانات
+      await StorageService().logout();
+      RefreshTokenService().stopAutoRefresh();
 
-        // اقفل الـ Drawer
-        Navigator.of(context).pop();
+      // اقفل الـ Drawer
+      Navigator.of(context).pop();
 
-        // روح على شاشة اللوجين
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => const RegisterView()),
-          (route) => false,
-        );
-      },
-    );
-  }
+      // روح على شاشة اللوجين
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const RegisterView()),
+        (route) => false,
+      );
+    },
+  );
+}
 
-  DrawerHeader customDrawerHeader() {
+DrawerHeader customDrawerHeader() {
   return DrawerHeader(
     decoration: const BoxDecoration(color: Colors.blue),
     child: FutureBuilder(
@@ -108,7 +137,6 @@ class _CustomDrawerState extends State<CustomDrawer> {
       },
     ),
   );
-  }
 }
 
 ListTile logoutTile(BuildContext context) {
@@ -118,43 +146,49 @@ ListTile logoutTile(BuildContext context) {
     onTap: () {
       showDialog(
         context: context,
-        builder: (dialogContext) => AlertDialog(
-          title: const Text("تأكيد"),
-          content: const Text("هل أنت متأكد أنك تريد تسجيل الخروج؟"),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(dialogContext); // يقفل الـ dialog
-              },
-              child: const Text("إلغاء"),
-            ),
-            TextButton(
-              onPressed: () async {
-                Navigator.pop(dialogContext); // يقفل الـ dialog
+        builder:
+            (dialogContext) => AlertDialog(
+              title: const Text("تأكيد"),
+              content: const Text("هل أنت متأكد أنك تريد تسجيل الخروج؟"),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(dialogContext); // يقفل الـ dialog
+                  },
+                  child: const Text("إلغاء"),
+                ),
+                TextButton(
+                  onPressed: () async {
+                    Navigator.pop(dialogContext); // يقفل الـ dialog
 
-                try {
-                  await LogoutService().logout();
-                  await StorageService().logout();
-                  RefreshTokenService().stopAutoRefresh();
+                    try {
+                      await LogoutService().logout();
+                      await StorageService().logout();
+                      RefreshTokenService().stopAutoRefresh();
 
-                  // ✅ امسح أي شاشات سابقة ورجع للـ RegisterView
-                  Future.microtask(() {
-                    Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
-                      MaterialPageRoute(builder: (_) => const RegisterView()),
-                      (route) => false,
-                    );
-                  });
-                } catch (e) {
-                  if (!context.mounted) return;
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("❌ فشل تسجيل الخروج: $e")),
-                  );
-                }
-              },
-              child: const Text("نعم"),
+                      // ✅ امسح أي شاشات سابقة ورجع للـ RegisterView
+                      Future.microtask(() {
+                        Navigator.of(
+                          context,
+                          rootNavigator: true,
+                        ).pushAndRemoveUntil(
+                          MaterialPageRoute(
+                            builder: (_) => const RegisterView(),
+                          ),
+                          (route) => false,
+                        );
+                      });
+                    } catch (e) {
+                      if (!context.mounted) return;
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("❌ فشل تسجيل الخروج: $e")),
+                      );
+                    }
+                  },
+                  child: const Text("نعم"),
+                ),
+              ],
             ),
-          ],
-        ),
       );
     },
   );

@@ -3,7 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:study_platform/helper/validators.dart';
 import 'package:study_platform/models/authentication/register_model.dart';
-import 'package:study_platform/services/authentication/link_child_service.dart';
 import 'package:study_platform/services/authentication/register_service.dart';
 import 'package:study_platform/views/confirm_email_view.dart';
 import 'package:study_platform/views/login_view.dart';
@@ -187,19 +186,6 @@ class _RegisterViewState extends State<RegisterView> {
             // ✨ Step 1: Register
             final response = await RegisterService().register(registerModel);
             print("✅ Register response: $response");
-
-            // ✨ Step 2: Link child (only if parent)
-            if (userType == "parent" &&
-                childUsername != null &&
-                childUsername!.isNotEmpty) {
-              try {
-                await LinkChildService().linkChild(childUsername!);
-                print("✅ Child linked successfully");
-              } catch (e) {
-                print("❌ Error linking child: $e");
-                // تقدر هنا تختار: توقف الفلو ولا تكمل عادي
-              }
-            }
 
             setState(() {
               isLoading = false;

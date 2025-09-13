@@ -14,6 +14,11 @@ void main() async {
   final loggedIn = await storage.isLoggedIn();
   final userType = await storage.getUserType();
 
+    // ✅ جدد التوكن أول ما الابلكيشن يفتح
+  if (loggedIn) {
+    await RefreshTokenService().refreshAccessToken();
+  }
+
   runApp(MyApp(loggedIn: loggedIn, userType: userType));
 
   // ⏳ شغل ريفرش التوكن كل 5 دقايق
