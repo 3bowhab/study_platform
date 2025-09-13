@@ -14,9 +14,9 @@ class _StudentBottomNavState extends State<StudentBottomNav> {
   int _currentIndex = 0;
 
   final List<Widget> _pages = const [
-    StudentDashboardView(),
+    StudentEnrollmentsView(), 
     StudentCoursesView(),
-    StudentEnrollmentsView(), // ✅ الصفحة الجديدة
+    StudentDashboardView(),
   ];
 
   @override
@@ -32,13 +32,13 @@ class _StudentBottomNavState extends State<StudentBottomNav> {
         },
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.dashboard),
-            label: "Dashboard",
+            icon: Icon(Icons.school), // 🎓 أيقونة للاشتراكات
+            label: "Enrollments",
           ),
           BottomNavigationBarItem(icon: Icon(Icons.book), label: "Courses"),
           BottomNavigationBarItem(
-            icon: Icon(Icons.school), // 🎓 أيقونة للاشتراكات
-            label: "Enrollments",
+            icon: Icon(Icons.dashboard),
+            label: "Dashboard",
           ),
         ],
       ),

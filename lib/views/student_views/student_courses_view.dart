@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:study_platform/models/student_models/course_model.dart';
 import 'package:study_platform/services/student/post_enrollment_service.dart';
 import 'package:study_platform/services/student/student_courses_service.dart';
+import 'package:study_platform/widgets/custom_drawer.dart';
 
 class StudentCoursesView extends StatefulWidget {
   const StudentCoursesView({super.key});
@@ -126,6 +127,7 @@ class _StudentCoursesViewState extends State<StudentCoursesView> {
 
     return Scaffold(
       appBar: AppBar(title: const Text("Courses")),
+      drawer: CustomDrawer(),
       body: ListView.builder(
         itemCount: courses.length,
         itemBuilder: (context, i) {

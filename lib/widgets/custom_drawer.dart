@@ -42,7 +42,6 @@ class _CustomDrawerState extends State<CustomDrawer> {
             },
           ),
           logoutTile(context),
-          logoutWithoutService(context),
         ],
       ),
     );

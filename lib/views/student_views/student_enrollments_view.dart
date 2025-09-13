@@ -4,6 +4,7 @@ import 'package:study_platform/models/student_models/course_model.dart';
 import 'package:study_platform/models/student_models/my_courses_service.dart';
 import 'package:study_platform/services/student/get_enrollment_service.dart';
 import 'package:study_platform/views/student_views/course_details_view.dart';
+import 'package:study_platform/widgets/custom_drawer.dart';
 
 class StudentEnrollmentsView extends StatefulWidget {
   const StudentEnrollmentsView({super.key});
@@ -75,6 +76,7 @@ class _StudentEnrollmentsViewState extends State<StudentEnrollmentsView> {
 
     return Scaffold(
       appBar: AppBar(title: const Text("My Enrollments & Courses")),
+      drawer: CustomDrawer(),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(12),
         child: Column(
