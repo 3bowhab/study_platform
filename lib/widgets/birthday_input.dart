@@ -43,7 +43,7 @@ class BirthDateFieldState extends State<BirthDateField> {
             colorScheme: ColorScheme.light(
               primary: Color(0xFF20B2AA), // لون البنفسجي الجديد
               onPrimary: Colors.white,
-              onSurface: AppColors.gray,
+              onSurface: AppColors.grayColor,
             ),
           ),
           child: child!,
@@ -79,7 +79,7 @@ class BirthDateFieldState extends State<BirthDateField> {
           floatingLabelBehavior: FloatingLabelBehavior.auto,
           labelText: widget.initialValue ?? "تاريخ الميلاد",
           labelStyle: const TextStyle(
-            color: AppColors.gray,
+            color: AppColors.grayColor,
             fontFamily: 'KidzhoodArabic',
           ),
           // prefixIcon: Icon(Icons.cake, color: AppColors.secondaryColor),
@@ -106,7 +106,7 @@ class BirthDateFieldState extends State<BirthDateField> {
           ),
         ),
         style: const TextStyle(
-          color: AppColors.textColor,
+          color: AppColors.blackColor,
           fontFamily: 'KidzhoodArabic',
         ),
       ),

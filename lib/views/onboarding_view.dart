@@ -9,7 +9,7 @@ final pages = [
     icon: Icons.school,
     title: "ابدأ رحلتك التعليمية بسهولة وتعلم أينما كنت",
     bgColor: AppColors.primaryColor,
-    textColor: AppColors.tertiaryColor,
+    textColor: AppColors.whiteColor,
   ),
   const PageData(
     icon: Icons.edit_note,
@@ -20,7 +20,7 @@ final pages = [
   const PageData(
     icon: Icons.trending_up,
     title: "تابع تقدمك وحقق أهدافك التعليمية معنا",
-    bgColor: AppColors.tertiaryColor,
+    bgColor: AppColors.whiteColor,
     textColor: AppColors.primaryColor,
   ),
 ];
