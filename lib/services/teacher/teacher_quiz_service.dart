@@ -7,28 +7,31 @@ final Api _api = Api();
 final StorageService storageService = StorageService();
 
 class TeacherQuizService {
-  /// 🟢 Get quiz by ID
-  Future<QuizModel> getQuiz(int id) async {
+  /// 🟢 Get quiz by SectionId
+  Future<QuizModel?> getQuizBySection(int sectionId) async {
     final token = await storageService.getAccessToken();
     if (token == null) throw Exception("❌ No token found. Please login again.");
 
     try {
       final response = await _api.get(
-        url: "${ApiConstants.teacherQuizzes}$id/", // 👈 /teacher/quizzes/{id}/
+        url: "${ApiConstants.teacherSections}$sectionId/",
+        // 👈 لازم الـ API يكون عامل endpoint بالشكل ده
         token: token,
       );
 
-      print("✅ Quiz fetched successfully");
+      if (response == null || response.isEmpty) return null;
+
+      print("✅ Quiz for section $sectionId fetched successfully");
       return QuizModel.fromJson(response);
     } catch (e) {
-      print("❌ Failed to fetch quiz: $e");
-      rethrow;
+      print("❌ Failed to fetch quiz by section: $e");
+      return null; // ممكن يكون مفيش كويز اساساً
     }
   }
 
   /// 🟢 Update quiz (PUT)
   Future<QuizModel> updateQuiz({
-    required int id,
+    required int sectionId,
     required String title,
     required String description,
     required int timeLimitMinutes,
@@ -52,7 +55,7 @@ class TeacherQuizService {
       };
 
       final response = await _api.put(
-        url: "${ApiConstants.teacherQuizzes}$id/",
+        url: "${ApiConstants.teacherQuizzes}$sectionId/",
         body: body,
         token: token,
       );

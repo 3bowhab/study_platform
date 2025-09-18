@@ -4,6 +4,7 @@ import 'package:study_platform/models/student_models/section_model.dart';
 import 'package:study_platform/services/teacher/teacher_sections_service.dart';
 import 'package:study_platform/views/teacher_views/add_section_view.dart';
 import 'package:study_platform/views/teacher_views/edit_section_view.dart';
+import 'package:study_platform/views/teacher_views/teacher_quiz_view.dart';
 
 class TeacherSectionsView extends StatefulWidget {
   final CourseModel course;
@@ -72,64 +73,77 @@ class _TeacherSectionsViewState extends State<TeacherSectionsView> {
               itemCount: sections.length,
               itemBuilder: (context, index) {
                 final section = sections[index];
-                return Card(
-                  margin: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            const Icon(
-                              Icons.library_books,
-                              size: 40,
-                              color: Colors.blue,
+                return GestureDetector(
+                    onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder:
+                            (_) => TeacherQuizView(
+                              sectionId: section.id, // ابعته بالـ sectionId
                             ),
-                            const SizedBox(width: 10),
-                            Expanded(
-                              child: Text(
-                                section.title,
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
+                      ),
+                    );
+                  },
+                  child: Card(
+                    margin: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.library_books,
+                                size: 40,
+                                color: Colors.blue,
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Text(
+                                  section.title,
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.edit, color: Colors.grey),
-                              onPressed: () async {
-                                final updated = await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder:
-                                        (_) =>
-                                            EditSectionView(section: section),
-                                  ),
-                                );
-                                if (updated == true) {
-                                  _refreshSections();
-                                }
-                              },
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        if (section.description.isNotEmpty)
-                          Text("📝 ${section.description}"),
-                        Text("📌 Type: ${section.contentType}"),
-                        Text(
-                          "▶ Content: ${section.content.isEmpty ? "N/A" : section.content}",
-                        ),
-                        Text("⏱ Duration: ${section.durationMinutes} mins"),
-                        Text("👁 Views: ${section.totalViews}"),
-                        Text("📅 Created: ${section.createdAt}"),
-                        Text("📝 Updated: ${section.updatedAt}"),
-                        if (section.hasQuiz) const Text("✅ Has Quiz"),
-                      ],
+                              IconButton(
+                                icon: const Icon(Icons.edit, color: Colors.grey),
+                                onPressed: () async {
+                                  final updated = await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder:
+                                          (_) =>
+                                              EditSectionView(section: section),
+                                    ),
+                                  );
+                                  if (updated == true) {
+                                    _refreshSections();
+                                  }
+                                },
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          if (section.description.isNotEmpty)
+                            Text("📝 ${section.description}"),
+                          Text("📌 Type: ${section.contentType}"),
+                          Text(
+                            "▶ Content: ${section.content.isEmpty ? "N/A" : section.content}",
+                          ),
+                          Text("⏱ Duration: ${section.durationMinutes} mins"),
+                          Text("👁 Views: ${section.totalViews}"),
+                          Text("📅 Created: ${section.createdAt}"),
+                          Text("📝 Updated: ${section.updatedAt}"),
+                          if (section.hasQuiz) const Text("✅ Has Quiz"),
+                        ],
+                      ),
                     ),
                   ),
                 );

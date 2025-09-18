@@ -146,6 +146,7 @@ class _ProfileViewState extends State<ProfileView> {
   // 👨‍👩‍👦 ولي الأمر
   Widget _buildParent(ParentProfileModel parent) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _profileHeader(Icons.family_restroom, "ولي الأمر"),
         _buildUserInfo(parent.user),
@@ -159,10 +160,17 @@ class _ProfileViewState extends State<ProfileView> {
           "الإشعارات عبر الرسائل",
           parent.smsNotifications ? "مفعل" : "غير مفعّل",
         ),
-        _infoCard("عدد الأبناء", "${parent.children.length}"),
+        const SizedBox(height: 20),
+        if (parent.children.isEmpty)
+          const Center(child: Text("لا يوجد أبناء مسجلين")),
+        for (var child in parent.children) ...[
+          _buildStudent(child), // 👈 كده ولي الأمر يشوف بيانات ابنه بالكامل
+          const Divider(thickness: 1),
+        ],
       ],
     );
   }
+
 
   // 🟦 العنوان الرئيسي
   Widget _profileHeader(IconData icon, String title) {

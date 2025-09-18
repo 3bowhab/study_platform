@@ -19,7 +19,8 @@ class ParentProfileService {
         token: token,
       );
 
-      final parentProfile = ParentProfileModel.fromJson(response);
+      final parentProfile = ParentProfileModel.fromJson(response["profile"]);
+
 
       print("✅ Parent profile fetched successfully");
       return parentProfile;

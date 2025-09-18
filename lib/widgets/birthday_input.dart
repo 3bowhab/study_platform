@@ -43,7 +43,7 @@ class BirthDateFieldState extends State<BirthDateField> {
             colorScheme: ColorScheme.light(
               primary: Color(0xFF20B2AA), // لون البنفسجي الجديد
               onPrimary: Colors.white,
-              onSurface: AppColors.secondaryText,
+              onSurface: AppColors.gray,
             ),
           ),
           child: child!,
@@ -76,22 +76,20 @@ class BirthDateFieldState extends State<BirthDateField> {
         onTap: () => _selectDate(context),
         textAlign: TextAlign.right,
         decoration: InputDecoration(
-          fillColor: AppColors.mainBackground,
-          filled: true,
           floatingLabelBehavior: FloatingLabelBehavior.auto,
           labelText: widget.initialValue ?? "تاريخ الميلاد",
           labelStyle: const TextStyle(
-            color: AppColors.secondaryText,
+            color: AppColors.gray,
             fontFamily: 'KidzhoodArabic',
           ),
-          prefixIcon: Icon(Icons.cake, color: AppColors.secondaryColor),
+          // prefixIcon: Icon(Icons.cake, color: AppColors.secondaryColor),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
-            borderSide: BorderSide(color: AppColors.secondaryColor),
+            // borderSide: BorderSide(color: AppColors.secondaryColor),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
-            borderSide: BorderSide(color: AppColors.secondaryColor, width: 2),
+            // borderSide: BorderSide(color: AppColors.secondaryColor, width: 2),
           ),
           errorStyle: const TextStyle(
             color: Color.fromARGB(255, 255, 17, 0),
@@ -108,7 +106,7 @@ class BirthDateFieldState extends State<BirthDateField> {
           ),
         ),
         style: const TextStyle(
-          color: AppColors.secondaryText,
+          color: AppColors.textColor,
           fontFamily: 'KidzhoodArabic',
         ),
       ),

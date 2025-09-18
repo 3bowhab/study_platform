@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:study_platform/helper/storage_service.dart';
 import 'package:study_platform/services/authentication/refresh_token_service.dart';
+import 'package:study_platform/views/onboarding_view.dart';
 import 'package:study_platform/views/parent_views/parent_dashboard_view.dart';
 import 'package:study_platform/views/register_view.dart';
 import 'package:study_platform/views/student_views/student_bottom_nav.dart';
@@ -12,13 +13,20 @@ void main() async {
   final storage = StorageService();
   final loggedIn = await storage.isLoggedIn();
   final userType = await storage.getUserType();
+  final seenOnboarding = await storage.getSeenOnboarding();
 
-    // ✅ جدد التوكن أول ما الابلكيشن يفتح
+  // ✅ جدد التوكن أول ما الابلكيشن يفتح
   if (loggedIn) {
     await RefreshTokenService().refreshAccessToken();
   }
 
-  runApp(MyApp(loggedIn: loggedIn, userType: userType));
+  runApp(
+    MyApp(
+      loggedIn: loggedIn,
+      userType: userType,
+      seenOnboarding: seenOnboarding,
+    ),
+  );
 
   // ⏳ شغل ريفرش التوكن كل 5 دقايق
   if (loggedIn) {
@@ -29,13 +37,22 @@ void main() async {
 class MyApp extends StatelessWidget {
   final bool loggedIn;
   final String? userType;
-  const MyApp({super.key, required this.loggedIn, this.userType});
+  final bool seenOnboarding;
+
+  const MyApp({
+    super.key,
+    required this.loggedIn,
+    this.userType,
+    required this.seenOnboarding,
+  });
 
   @override
   Widget build(BuildContext context) {
     Widget home;
 
-    if (!loggedIn) {
+    if (!seenOnboarding) {
+      home = const ConcentricAnimationOnboarding();
+    } else if (!loggedIn) {
       home = const RegisterView();
     } else {
       switch (userType) {
@@ -49,7 +66,7 @@ class MyApp extends StatelessWidget {
           home = const ParentDashboardView();
           break;
         default:
-          home = const RegisterView(); // fallback لو في حاجة غلط
+          home = const RegisterView();
       }
     }
 
