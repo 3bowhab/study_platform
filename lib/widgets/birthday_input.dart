@@ -4,12 +4,12 @@ import 'package:study_platform/helper/app_colors_fonts.dart';
 class BirthDateField extends StatefulWidget {
   final String hintText;
   final String? initialValue;
-  final String? initialDate; // تاريخ الميلاد الافتراضي
-  final Function(String)? onChanged; // يتم استدعاؤها عند التغيير
+  final String? initialDate;
+  final Function(String)? onChanged;
 
   const BirthDateField({
     super.key,
-    this.hintText = "العمر",
+    this.hintText = "تاريخ الميلاد",
     this.initialDate,
     this.onChanged,
     this.initialValue,
@@ -41,9 +41,9 @@ class BirthDateFieldState extends State<BirthDateField> {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: ColorScheme.light(
-              primary: Color(0xFF20B2AA), // لون البنفسجي الجديد
+              primary: AppColors.primaryColor, // اللون الأساسي
               onPrimary: Colors.white,
-              onSurface: AppColors.grayColor,
+              onSurface: AppColors.primaryColor,
             ),
           ),
           child: child!,
@@ -57,9 +57,7 @@ class BirthDateFieldState extends State<BirthDateField> {
       setState(() {
         _dateController.text = formatted;
       });
-      if (widget.onChanged != null) {
-        widget.onChanged!(formatted);
-      }
+      widget.onChanged?.call(formatted);
     }
   }
 
@@ -70,44 +68,52 @@ class BirthDateFieldState extends State<BirthDateField> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: TextFormField(
-        validator: (data) => feildValidator(data),
+        validator: feildValidator,
         controller: _dateController,
         readOnly: true,
         onTap: () => _selectDate(context),
         textAlign: TextAlign.right,
         decoration: InputDecoration(
-          floatingLabelBehavior: FloatingLabelBehavior.auto,
-          labelText: widget.initialValue ?? "تاريخ الميلاد",
+          labelText: widget.initialValue ?? widget.hintText,
           labelStyle: const TextStyle(
-            color: AppColors.grayColor,
-            fontFamily: 'KidzhoodArabic',
+            color: AppColors.blackColor,
+            fontFamily: AppFonts.mainFont,
           ),
-          // prefixIcon: Icon(Icons.cake, color: AppColors.secondaryColor),
+          prefixIcon: const Icon(Icons.cake,),
+          filled: true,
+          fillColor: AppColors.grayColor.withValues(alpha: 0.1),
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            // borderSide: BorderSide(color: AppColors.secondaryColor),
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(
+              color: AppColors.blackColor,
+              width: 1,
+            ),
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            // borderSide: BorderSide(color: AppColors.secondaryColor, width: 2),
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(
+              color: AppColors.primaryColor,
+              width: 2,
+            ),
           ),
           errorStyle: const TextStyle(
-            color: Color.fromARGB(255, 255, 17, 0),
+            color: AppColors.errorColor,
             fontSize: 12,
-            fontFamily: 'KidzhoodArabic',
+            fontFamily: AppFonts.mainFont,
           ),
           errorBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.red, width: 2),
-            borderRadius: BorderRadius.circular(8),
+            borderSide: const BorderSide(color: AppColors.errorColor, width: 1.5),
+            borderRadius: BorderRadius.all(Radius.circular(12)),
           ),
           focusedErrorBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.red, width: 2),
-            borderRadius: BorderRadius.circular(8),
+            borderSide: const BorderSide(color: AppColors.errorColor, width: 1.5),
+            borderRadius: BorderRadius.all(Radius.circular(12)),
           ),
         ),
         style: const TextStyle(
           color: AppColors.blackColor,
-          fontFamily: 'KidzhoodArabic',
+          fontFamily: AppFonts.mainFont,
+          fontSize: 16,
         ),
       ),
     );
@@ -115,7 +121,7 @@ class BirthDateFieldState extends State<BirthDateField> {
 
   String? feildValidator(String? data) {
     if (data == null || data.isEmpty) {
-      return "هذا الحقل لا يمكن أن يكون فارغًا";
+      return "⚠️ برجاء اختيار تاريخ الميلاد";
     }
     return null;
   }

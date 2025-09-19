@@ -101,10 +101,11 @@ class _LoginViewState extends State<LoginView> {
                               margin: const EdgeInsets.only(top: 10),
                               child: const Center(
                                 child: Text(
-                                  "Login",
+                                  "تسجيل الدخول",
                                   style: TextStyle(
                                     color: Colors.white,
-                                    fontSize: 40,
+                                    fontSize: 30,
+                                    fontFamily: AppFonts.mainFont,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -124,52 +125,55 @@ class _LoginViewState extends State<LoginView> {
                     child: Form(
                       key: formkey,
                       autovalidateMode: autovalidateMode,
-                      child: Column(
-                        children: <Widget>[
-                          FadeInUp(
-                            duration: const Duration(milliseconds: 1800),
-                            child: Column(
-                              children: [
-                                CustomTextField(
-                                  labelText: "Username or Email",
-                                  validator: AppValidators.requiredField,
-                                  onsaved: (newValue) {
-                                    usernameOrEmail = newValue;
-                                  },
-                                ),
-                                const SizedBox(height: 16),
-                                CustomTextField(
-                                  labelText: "Password",
-                                  controller: _passwordController,
-                                  validator: AppValidators.passwordValidator,
-                                  obscureText: true,
-                                ),
-                              ],
+                      child: Directionality(
+                        textDirection: TextDirection.rtl,
+                        child: Column(
+                          children: <Widget>[
+                            FadeInUp(
+                              duration: const Duration(milliseconds: 1800),
+                              child: Column(
+                                children: [
+                                  CustomTextField(
+                                    labelText: "اسم المستخدم أو البريد الإلكتروني",
+                                    validator: AppValidators.requiredField,
+                                    onsaved: (newValue) {
+                                      usernameOrEmail = newValue;
+                                    },
+                                  ),
+                                  const SizedBox(height: 16),
+                                  CustomTextField(
+                                    labelText: "كلمة المرور",
+                                    controller: _passwordController,
+                                    validator: AppValidators.passwordValidator,
+                                    obscureText: true,
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 30),
-
-                          // 🔹 زرار اللوجين
-                          FadeInUp(
-                            duration: const Duration(milliseconds: 1900),
-                            child: loginButton(context),
-                          ),
-                          const SizedBox(height: 20),
-
-                          // 🔹 Register link
-                          FadeInUp(
-                            duration: const Duration(milliseconds: 2000),
-                            child: goToRegisterView(context),
-                          ),
-
-                          const SizedBox(height: 20),
-
-                          // 🔹 Forgot password
-                          FadeInUp(
-                            duration: const Duration(milliseconds: 2100),
-                            child: requestResetPassword(context),
-                          ),
-                        ],
+                            const SizedBox(height: 30),
+                        
+                            // 🔹 زرار اللوجين
+                            FadeInUp(
+                              duration: const Duration(milliseconds: 1900),
+                              child: loginButton(context),
+                            ),
+                            const SizedBox(height: 20),
+                        
+                            // 🔹 Register link
+                            FadeInUp(
+                              duration: const Duration(milliseconds: 2000),
+                              child: goToRegisterView(context),
+                            ),
+                        
+                            const SizedBox(height: 20),
+                        
+                            // 🔹 Forgot password
+                            FadeInUp(
+                              duration: const Duration(milliseconds: 2100),
+                              child: requestResetPassword(context),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -243,7 +247,7 @@ class _LoginViewState extends State<LoginView> {
           setState(() => autovalidateMode = AutovalidateMode.always);
         }
       },
-      child: const Text("Login", style: TextStyle(color: AppColors.whiteColor)),
+      child: const Text("تسجيل الدخول", style: TextStyle(color: AppColors.whiteColor, fontFamily: AppFonts.mainFont)),
     );
   }
 
@@ -251,7 +255,7 @@ class _LoginViewState extends State<LoginView> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Text("Don't have an account?"),
+        const Text("لا تملك حساب؟", style: TextStyle(fontFamily: AppFonts.mainFont)),
         TextButton(
           onPressed: () {
             Navigator.pushReplacement(
@@ -259,7 +263,7 @@ class _LoginViewState extends State<LoginView> {
               MaterialPageRoute(builder: (context) => const RegisterView()),
             );
           },
-          child: const Text("Register"),
+          child: const Text("انشاء حساب جديد", style: TextStyle(fontFamily: AppFonts.mainFont)),
         ),
       ],
     );
@@ -287,7 +291,7 @@ class _LoginViewState extends State<LoginView> {
           ).showSnackBar(const SnackBar(content: Text("❌ حصل خطأ، حاول تاني")));
         }
       },
-      child: const Text("نسيت كلمة المرور؟"),
+      child: const Text("نسيت كلمة المرور؟", style: TextStyle(fontFamily: AppFonts.mainFont)),
     );
   }
 }
