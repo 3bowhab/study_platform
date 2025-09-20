@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:study_platform/helper/api.dart';
 import 'package:study_platform/helper/api_constants.dart';
 import 'package:study_platform/helper/storage_service.dart';
@@ -22,6 +23,9 @@ class ResendVerificationEmailService {
       );
 
       print("✅ Response from API (resend verification email): $response");
+    } on DioException catch (e) {
+      final message = api.handleDioError(e);
+      throw Exception(message); // ❌ هترجع للمستخدم الرسالة بس
     } catch (e) {
       throw Exception("❌ Unexpected Error in resendVerificationEmail: $e");
     }

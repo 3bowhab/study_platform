@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:study_platform/helper/api.dart';
 import 'package:study_platform/helper/api_constants.dart';
 import 'package:study_platform/helper/storage_service.dart';
@@ -16,7 +17,7 @@ class LoginService {
         token: null,
       );
 
-      print('Response from API: $response');
+      print('✅ Response from API: $response');
 
       final authResponse = AuthResponseModel.fromJson(response);
 
@@ -30,9 +31,17 @@ class LoginService {
       );
 
       return authResponse;
-    } catch (e) {
-      print('❌ Error occurred in login: $e');
-      rethrow;
+    } on DioException catch (e) {
+      final errorMessage = e.response?.data["error"] ?? e.message;
+
+      if (errorMessage != null && errorMessage.contains("Email not verified")) {
+        // ❌ ارمي exception مخصص عشان الـ UI يتصرف
+        throw Exception("EMAIL_NOT_VERIFIED");
+      } else {
+        print('❌ Error occurred in login: $e');
+        throw Exception(errorMessage);
+      }
     }
   }
 }
+

@@ -27,8 +27,8 @@ class Api {
 
       return response.data;
     } on DioException catch (e) {
-      _handleDioError(e);
-      rethrow;
+      final message = handleDioError(e);
+      throw Exception(message); // ✅ رجع رسالة بسيطة
     } catch (e) {
       print('❌ [GET UNEXPECTED ERROR] $e');
       throw Exception("Unexpected Error: $e");
@@ -62,8 +62,8 @@ class Api {
 
       return response.data;
     } on DioException catch (e) {
-      _handleDioError(e);
-      rethrow;
+      final message = handleDioError(e);
+      throw Exception(message); // ✅ رجع رسالة بسيطة
     } catch (e) {
       print('❌ [POST UNEXPECTED ERROR] $e');
       throw Exception("Unexpected Error: $e");
@@ -97,8 +97,8 @@ class Api {
 
       return response.data;
     } on DioException catch (e) {
-      _handleDioError(e);
-      rethrow;
+      final message = handleDioError(e);
+      throw Exception(message); // ✅ رجع رسالة بسيطة
     } catch (e) {
       print('❌ [PUT UNEXPECTED ERROR] $e');
       throw Exception("Unexpected Error: $e");
@@ -132,8 +132,8 @@ class Api {
 
       return response.data;
     } on DioException catch (e) {
-      _handleDioError(e);
-      rethrow;
+      final message = handleDioError(e);
+      throw Exception(message);
     } catch (e) {
       print('❌ [PATCH UNEXPECTED ERROR] $e');
       throw Exception("Unexpected Error: $e");
@@ -175,21 +175,11 @@ class Api {
 
       return response.data;
     } on DioException catch (e) {
-      _handleDioError(e);
-      rethrow;
+      final message = handleDioError(e);
+      throw Exception(message);
     } catch (e) {
       print('❌ [MULTIPART UNEXPECTED ERROR] $e');
       throw Exception("Unexpected Error: $e");
-    }
-  }
-
-  // 🔹 Helper function لتوحيد التعامل مع Errors
-  void _handleDioError(DioException e) {
-    print('❌ DioException: ${e.message}');
-    if (e.response != null) {
-      print('❌ Status: ${e.response?.statusCode}');
-      print('❌ Headers: ${e.response?.headers}');
-      print('❌ Data: ${e.response?.data}');
     }
   }
 
@@ -215,11 +205,39 @@ class Api {
 
       return response.data;
     } on DioException catch (e) {
-      _handleDioError(e);
-      rethrow;
+      final message = handleDioError(e);
+      throw Exception(message);
     } catch (e) {
       print('❌ [DELETE UNEXPECTED ERROR] $e');
       throw Exception("Unexpected Error: $e");
+    }
+  }
+
+  String handleDioError(DioException e) {
+    // 🖨️ اطبع كل التفاصيل عشان المطوّر يشوفها في Logcat
+    print('❌ DioException: ${e.message}');
+    if (e.response != null) {
+      print('❌ Status: ${e.response?.statusCode}');
+      print('❌ Headers: ${e.response?.headers}');
+      print('❌ Data: ${e.response?.data}');
+    }
+
+    // 🎯 رجّع للمستخدم رسالة مختصرة بس
+    if (e.response != null) {
+      final data = e.response?.data;
+      if (data is Map) {
+        final firstKey = data.keys.first;
+        final firstValue = data[firstKey];
+        if (firstValue is List && firstValue.isNotEmpty) {
+          return firstValue.first.toString();
+        } else {
+          return firstValue.toString();
+        }
+      } else {
+        return data.toString();
+      }
+    } else {
+      return e.message ?? "Unknown error";
     }
   }
 }

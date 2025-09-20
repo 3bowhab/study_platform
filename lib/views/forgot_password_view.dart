@@ -3,28 +3,24 @@ import 'package:animate_do/animate_do.dart';
 import 'package:study_platform/helper/app_colors_fonts.dart';
 import 'package:study_platform/helper/validators.dart';
 import 'package:study_platform/services/settings/reset_password_request_service.dart';
+import 'package:study_platform/views/Drawer_views/new_password_view.dart';
 import 'package:study_platform/widgets/custom_text_field.dart';
 import 'package:study_platform/widgets/loading_indecator.dart';
 
-class NewPasswordView extends StatefulWidget {
-  const NewPasswordView({super.key});
+class ForgotPasswordView extends StatefulWidget {
+  const ForgotPasswordView({super.key});
 
   @override
-  State<NewPasswordView> createState() => _NewPasswordViewState();
+  State<ForgotPasswordView> createState() => _ForgotPasswordViewState();
 }
 
-class _NewPasswordViewState extends State<NewPasswordView> {
-  final formkey = GlobalKey<FormState>();
-  AutovalidateMode autovalidateMode = AutovalidateMode.disabled;
-
-  String? otp;
-  final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmController = TextEditingController();
-
-  final PasswordResetService passwordResetConfirmService =
-      PasswordResetService();
+class _ForgotPasswordViewState extends State<ForgotPasswordView> {
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController _emailController = TextEditingController();
+  final PasswordResetService passwordResetService = PasswordResetService();
 
   bool isLoading = false;
+  AutovalidateMode autovalidateMode = AutovalidateMode.disabled;
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +33,7 @@ class _NewPasswordViewState extends State<NewPasswordView> {
             body: SingleChildScrollView(
               child: Column(
                 children: <Widget>[
-                  // 🔹 الجزء العلوي (الخلفية + الصور + العنوان)
+                  // 🔹 الجزء العلوي (ديزاين مع الأنيميشن)
                   Container(
                     height: 300,
                     decoration: const BoxDecoration(
@@ -94,13 +90,13 @@ class _NewPasswordViewState extends State<NewPasswordView> {
                           child: FadeInUp(
                             duration: const Duration(milliseconds: 1600),
                             child: Container(
-                              margin: const EdgeInsets.only(top: 50),
+                              margin: const EdgeInsets.only(top: 10),
                               child: const Center(
                                 child: Text(
-                                  "إعادة تعيين\nكلمة المرور",
+                                  "نسيت كلمة المرور",
                                   style: TextStyle(
                                     color: Colors.white,
-                                    fontSize: 28,
+                                    fontSize: 23,
                                     fontFamily: AppFonts.mainFont,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -115,11 +111,11 @@ class _NewPasswordViewState extends State<NewPasswordView> {
 
                   const SizedBox(height: 20),
 
-                  // 🔹 الجزء السفلي (الفورم)
+                  // 🔹 الجزء السفلي (الفورم الحقيقي)
                   Padding(
                     padding: const EdgeInsets.all(30.0),
                     child: Form(
-                      key: formkey,
+                      key: _formKey,
                       autovalidateMode: autovalidateMode,
                       child: Directionality(
                         textDirection: TextDirection.rtl,
@@ -127,44 +123,34 @@ class _NewPasswordViewState extends State<NewPasswordView> {
                           children: <Widget>[
                             FadeInUp(
                               duration: const Duration(milliseconds: 1800),
-                              child: Column(
-                                children: [
-                                  CustomTextField(
-                                    labelText: 'رمز التحقق',
-                                    validator: AppValidators.requiredField,
-                                    keyboardType: TextInputType.number,
-                                    onsaved: (newValue) {
-                                      otp = newValue;
-                                    },
-                                  ),
-                                  const SizedBox(height: 16),
-                                  CustomTextField(
-                                    labelText: 'كلمة المرور الجديدة',
-                                    controller: _passwordController,
-                                    validator: AppValidators.passwordValidator,
-                                    obscureText: true,
-                                  ),
-                                  const SizedBox(height: 16),
-                                  CustomTextField(
-                                    labelText: 'تأكيد كلمة المرور',
-                                    controller: _confirmController,
-                                    obscureText: true,
-                                    validator:
-                                        (value) =>
-                                            AppValidators.confirmPasswordValidator(
-                                              value,
-                                              _passwordController.text,
-                                            ),
-                                  ),
-                                ],
+                              child: CustomTextField(
+                                controller: _emailController,
+                                labelText: "البريد الإلكتروني",
+                                validator: AppValidators.emailValidator,
                               ),
                             ),
                             const SizedBox(height: 30),
 
-                            // 🔹 زر التأكيد
+                            // زرار إرسال
                             FadeInUp(
                               duration: const Duration(milliseconds: 1900),
-                              child: submitButton(context),
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  minimumSize: const Size(double.infinity, 50),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  backgroundColor: AppColors.primaryColor,
+                                ),
+                                onPressed: _sendRequest,
+                                child: const Text(
+                                  "إرسال",
+                                  style: TextStyle(
+                                    color: AppColors.whiteColor,
+                                    fontFamily: AppFonts.mainFont,
+                                  ),
+                                ),
+                              ),
                             ),
                           ],
                         ),
@@ -176,57 +162,38 @@ class _NewPasswordViewState extends State<NewPasswordView> {
             ),
           ),
         ),
+
         if (isLoading) const LoadingIndicator(),
       ],
     );
   }
 
-  ElevatedButton submitButton(BuildContext context) {
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        minimumSize: const Size(double.infinity, 50),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        backgroundColor: AppColors.primaryColor,
-      ),
-      onPressed: () async {
-        if (formkey.currentState!.validate()) {
-          formkey.currentState!.save();
+  Future<void> _sendRequest() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() => isLoading = true);
 
-          setState(() => isLoading = true);
+      try {
+        await passwordResetService.requestPasswordReset(
+          _emailController.text.trim(),
+        );
+        setState(() => isLoading = false);
 
-          try {
-            await passwordResetConfirmService.confirmPasswordReset(
-              otp!,
-              _passwordController.text,
-              _confirmController.text,
-            );
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("📩 رابط إعادة التعيين اتبعت لبريدك")),
+        );
 
-            setState(() => isLoading = false);
-
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("✅ Password Reset Successful")),
-            );
-
-            Navigator.pop(context);
-            Navigator.pop(context);
-          } catch (e) {
-            setState(() => isLoading = false);
-
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(e.toString()),
-                duration: const Duration(seconds: 15),
-              ),
-            );
-          }
-        } else {
-          setState(() => autovalidateMode = AutovalidateMode.always);
-        }
-      },
-      child: const Text(
-        "تأكيد",
-        style: TextStyle(color: Colors.white, fontFamily: AppFonts.mainFont),
-      ),
-    );
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const NewPasswordView()),
+        );
+      } catch (e) {
+        setState(() => isLoading = false);
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("❌ حصل خطأ: $e")));
+      }
+    } else {
+      setState(() => autovalidateMode = AutovalidateMode.always);
+    }
   }
 }

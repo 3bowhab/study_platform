@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:study_platform/helper/validators.dart';
 import 'package:study_platform/services/settings/change_password_service.dart';
 import 'package:study_platform/services/settings/reset_password_request_service.dart';
-import 'package:study_platform/views/Drawer_views/new_password_view.dart';
 import 'package:study_platform/widgets/custom_text_field.dart';
 import 'package:study_platform/widgets/loading_indecator.dart';
 
@@ -69,7 +68,7 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
                   const SizedBox(height: 20),
                   submitButton(context),
                   const SizedBox(height: 20),
-                  requestResetPassword(context),
+                  // requestResetPassword(context),
                 ],
               ),
             ),
@@ -129,35 +128,35 @@ ElevatedButton submitButton(BuildContext context) {
   }
 
 
-   TextButton requestResetPassword(BuildContext context) {
-    return TextButton(
-      onPressed: () async {
-        setState(() {
-          isLoading = true; // ⏳ يبدأ اللودينج
-        });
+  //  TextButton requestResetPassword(BuildContext context) {
+  //   return TextButton(
+  //     onPressed: () async {
+  //       setState(() {
+  //         isLoading = true; // ⏳ يبدأ اللودينج
+  //       });
 
-        try {
-          await passwordResetService.requestPasswordReset();
-          setState(() {
-            isLoading = false; // ⏳ ينتهي اللودينج
-          });
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("📩 رابط إعادة التعيين اتبعت لبريدك")),
-          );
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const NewPasswordView()),
-          );
-        } catch (e) {
-          setState(() {
-            isLoading = false; // ⏳ ينتهي اللودينج
-          });
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(const SnackBar(content: Text("❌ حصل خطأ، حاول تاني")));
-        }
-      },
-      child: const Text("نسيت كلمة المرور؟"),
-    );
-  }
+  //       try {
+  //         await passwordResetService.requestPasswordReset();
+  //         setState(() {
+  //           isLoading = false; // ⏳ ينتهي اللودينج
+  //         });
+  //         ScaffoldMessenger.of(context).showSnackBar(
+  //           const SnackBar(content: Text("📩 رابط إعادة التعيين اتبعت لبريدك")),
+  //         );
+  //         Navigator.push(
+  //           context,
+  //           MaterialPageRoute(builder: (context) => const NewPasswordView()),
+  //         );
+  //       } catch (e) {
+  //         setState(() {
+  //           isLoading = false; // ⏳ ينتهي اللودينج
+  //         });
+  //         ScaffoldMessenger.of(
+  //           context,
+  //         ).showSnackBar(const SnackBar(content: Text("❌ حصل خطأ، حاول تاني")));
+  //       }
+  //     },
+  //     child: const Text("نسيت كلمة المرور؟"),
+  //   );
+  // }
 }

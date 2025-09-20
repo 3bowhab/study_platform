@@ -6,7 +6,8 @@ import 'package:study_platform/models/authentication/auth_response_model.dart';
 import 'package:study_platform/models/authentication/login_model.dart';
 import 'package:study_platform/services/authentication/login_service.dart';
 import 'package:study_platform/services/settings/reset_password_request_service.dart';
-import 'package:study_platform/views/Drawer_views/new_password_view.dart';
+import 'package:study_platform/views/confirm_email_view.dart';
+import 'package:study_platform/views/forgot_password_view.dart';
 import 'package:study_platform/views/home_view.dart';
 import 'package:study_platform/views/parent_views/parent_dashboard_view.dart';
 import 'package:study_platform/views/register_view.dart';
@@ -239,9 +240,18 @@ class _LoginViewState extends State<LoginView> {
             );
           } catch (e) {
             setState(() => isLoading = false);
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text("❌ Error: $e")));
+
+            if (e.toString().contains("Email not verified")) {
+              // 🔹 روح على صفحة تأكيد الإيميل
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => const ConfirmEmailView()),
+              );
+            } else {
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text("❌ Error: $e")));
+            }
           }
         } else {
           setState(() => autovalidateMode = AutovalidateMode.always);
@@ -271,25 +281,26 @@ class _LoginViewState extends State<LoginView> {
 
   TextButton requestResetPassword(BuildContext context) {
     return TextButton(
-      onPressed: () async {
-        setState(() => isLoading = true);
-        try {
-          await passwordResetService.requestPasswordReset();
-          setState(() => isLoading = false);
+      onPressed: (){
+        // setState(() => isLoading = true);
+        // try {
+        //   await passwordResetService.requestPasswordReset();
+        //   setState(() => isLoading = false);
 
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("📩 رابط إعادة التعيين اتبعت لبريدك")),
-          );
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const NewPasswordView()),
-          );
-        } catch (e) {
-          setState(() => isLoading = false);
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(const SnackBar(content: Text("❌ حصل خطأ، حاول تاني")));
-        }
+        //   ScaffoldMessenger.of(context).showSnackBar(
+        //     const SnackBar(content: Text("📩 رابط إعادة التعيين اتبعت لبريدك")),
+        //   );
+          
+        // } catch (e) {
+        //   setState(() => isLoading = false);
+        //   ScaffoldMessenger.of(
+        //     context,
+        //   ).showSnackBar(const SnackBar(content: Text("❌ حصل خطأ، حاول تاني")));
+        // }
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const ForgotPasswordView()),
+        );
       },
       child: const Text("نسيت كلمة المرور؟", style: TextStyle(fontFamily: AppFonts.mainFont)),
     );
