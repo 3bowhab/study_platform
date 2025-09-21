@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:study_platform/services/student/student_dashboard_service.dart';
+import 'package:study_platform/widgets/app_bar.dart';
 import 'package:study_platform/widgets/custom_drawer.dart';
 
 class StudentDashboardView extends StatefulWidget {
@@ -50,8 +51,8 @@ class _StudentDashboardViewState extends State<StudentDashboardView> {
     }
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Student Dashboard")),
-      drawer: CustomDrawer(),
+      appBar: const GradientAppBar(title: "احصائياتى", hasDrawer: true),
+      endDrawer: CustomDrawer(),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [

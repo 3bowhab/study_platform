@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:study_platform/helper/app_colors_fonts.dart';
 import 'package:study_platform/helper/storage_service.dart';
 import 'package:study_platform/services/authentication/refresh_token_service.dart';
 import 'package:study_platform/services/settings/logout_service.dart';
@@ -17,60 +18,92 @@ class CustomDrawer extends StatefulWidget {
 class _CustomDrawerState extends State<CustomDrawer> {
   @override
   Widget build(BuildContext context) {
-    return Drawer(
-      child: FutureBuilder<String?>(
-        future: StorageService().getUserType(), // نجيب نوع المستخدم
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Drawer(
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(25), // ✅ خلي الشمال مقفول
+            bottomLeft: Radius.circular(25), // ✅ الشمال مقفول
+          ),
+        ),
+        child: FutureBuilder<String?>(
+          future: StorageService().getUserType(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-          final userType = snapshot.data ?? "";
+            final userType = snapshot.data ?? "";
 
-          return ListView(
-            padding: EdgeInsets.zero,
-            children: [
-              customDrawerHeader(),
-              ListTile(
-                leading: const Icon(Icons.settings),
-                title: const Text('الحساب'),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const AccountView(),
-                    ),
-                  );
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.person),
-                title: const Text('الإعدادات'),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => SettingsView()),
-                  );
-                },
-              ),
-
-              // ✅ لو اليوزر parent نضيف التايل الجديدة
-              if (userType.toLowerCase() == "parent")
+            return ListView(
+              padding: EdgeInsets.zero,
+              children: [
+                customDrawerHeader(),
                 ListTile(
-                  leading: const Icon(Icons.family_restroom),
-                  title: const Text('حساب الابن'),
+                  leading: const Icon(
+                    Icons.settings,
+                    color: AppColors.primaryColor,
+                  ),
+                  title: const Text(
+                    'الحساب',
+                    style: TextStyle(fontFamily: AppFonts.mainFont),
+                  ),
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => LinkChildView()),
+                      MaterialPageRoute(
+                        builder: (context) => const AccountView(),
+                      ),
                     );
                   },
                 ),
+                const Divider(height: 1),
+                ListTile(
+                  leading: const Icon(
+                    Icons.person,
+                    color: AppColors.primaryColor,
+                  ),
+                  title: const Text(
+                    'الإعدادات',
+                    style: TextStyle(fontFamily: AppFonts.mainFont),
+                  ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => SettingsView()),
+                    );
+                  },
+                ),
+                const Divider(height: 1),
 
-              logoutTile(context),
-            ],
-          );
-        },
+                if (userType.toLowerCase() == "parent")
+                  ListTile(
+                    leading: const Icon(
+                      Icons.family_restroom,
+                      color: AppColors.primaryColor,
+                    ),
+                    title: const Text(
+                      'حساب الابن',
+                      style: TextStyle(fontFamily: AppFonts.mainFont),
+                    ),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => LinkChildView(),
+                        ),
+                      );
+                    },
+                  ),
+                if (userType.toLowerCase() == "parent")
+                  const Divider(height: 1),
+
+                logoutTile(context),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
@@ -100,7 +133,16 @@ ListTile logoutWithoutService(BuildContext context) {
 
 DrawerHeader customDrawerHeader() {
   return DrawerHeader(
-    decoration: const BoxDecoration(color: Colors.blue),
+    decoration: const BoxDecoration(
+      gradient: LinearGradient(
+        colors: [
+          AppColors.primaryColor,
+          AppColors.gradientColor
+        ],
+        begin: Alignment.topRight,
+        end: Alignment.bottomLeft,
+      ),
+    ),
     child: FutureBuilder(
       future: Future.wait([
         StorageService().getFullName(),
@@ -108,31 +150,46 @@ DrawerHeader customDrawerHeader() {
       ]),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator(color: Colors.white);
+          return const Center(
+            child: CircularProgressIndicator(color: Colors.white),
+          );
         }
         final fullName = snapshot.data?[0] ?? "Guest";
         final email = snapshot.data?[1] ?? "No Email";
 
-        return GestureDetector(
-          onTap: () async {
-            final token = await StorageService().getAccessToken();
-            print("📌 Stored Token: $token");
-          },
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                fullName,
-                style: const TextStyle(color: Colors.white, fontSize: 20),
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // ✅ صورة بروفايل افتراضية
+            // const CircleAvatar(
+            //   radius: 30,
+            //   backgroundColor: Colors.white,
+            //   child: Icon(Icons.person, size: 40, color: Colors.grey),
+            // ),
+            // const SizedBox(width: 15),
+            // ✅ الاسم والإيميل
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    fullName,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 5),
+                  Text(
+                    email,
+                    style: const TextStyle(color: Colors.white70, fontSize: 14),
+                  ),
+                ],
               ),
-              const SizedBox(height: 8),
-              Text(
-                email,
-                style: const TextStyle(color: Colors.white70, fontSize: 14),
-              ),
-            ],
-          ),
+            ),
+          ],
         );
       },
     ),
@@ -141,8 +198,11 @@ DrawerHeader customDrawerHeader() {
 
 ListTile logoutTile(BuildContext context) {
   return ListTile(
-    leading: const Icon(Icons.logout),
-    title: const Text('تسجيل الخروج'),
+    leading: const Icon(Icons.logout, color: AppColors.primaryColor),
+    title: const Text(
+      'تسجيل الخروج',
+      style: TextStyle(fontFamily: AppFonts.mainFont),
+    ),
     onTap: () {
       showDialog(
         context: context,

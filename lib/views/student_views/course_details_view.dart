@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:study_platform/helper/app_colors_fonts.dart';
 import 'package:study_platform/models/student_models/course_response.dart';
 import 'package:study_platform/models/student_models/quiz_model.dart';
 import 'package:study_platform/models/student_models/section_model.dart';
@@ -121,7 +122,10 @@ class _CourseDetailsViewState extends State<CourseDetailsView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Course Details")),
+      appBar: AppBar(
+        title: const Text("Course Details"),
+        backgroundColor: AppColors.primaryColor, // يمكنك تغيير اللون هنا
+      ),
       body:
           isLoading
               ? const Center(child: CircularProgressIndicator())

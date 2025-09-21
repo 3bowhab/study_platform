@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:study_platform/models/student_models/course_model.dart';
 import 'package:study_platform/services/student/post_enrollment_service.dart';
 import 'package:study_platform/services/student/student_courses_service.dart';
+import 'package:study_platform/widgets/app_bar.dart';
 import 'package:study_platform/widgets/custom_drawer.dart';
 
 class StudentCoursesView extends StatefulWidget {
@@ -120,14 +121,15 @@ class _StudentCoursesViewState extends State<StudentCoursesView> {
     }
     if (errorMessage != null) {
       return Scaffold(
-        appBar: AppBar(title: const Text("Courses")),
+        appBar: const GradientAppBar(title: "الدورات", hasDrawer: true),
+        endDrawer: CustomDrawer(),
         body: Center(child: Text("❌ $errorMessage")),
       );
     }
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Courses")),
-      drawer: CustomDrawer(),
+      appBar: const GradientAppBar(title: "الدورات", hasDrawer: true),
+      endDrawer: CustomDrawer(),
       body: ListView.builder(
         itemCount: courses.length,
         itemBuilder: (context, i) {
