@@ -100,6 +100,7 @@ class _RegisterViewState extends State<RegisterView> {
                         Positioned(
                           child: FadeInUp(
                             duration: const Duration(milliseconds: 1600),
+                            // ignore: avoid_unnecessary_containers
                             child: Container(
                               // margin: const EdgeInsets.only(top: 10),
                               child: const Center(

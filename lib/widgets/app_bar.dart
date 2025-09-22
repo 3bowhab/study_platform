@@ -21,6 +21,7 @@ class GradientAppBar extends StatelessWidget implements PreferredSizeWidget {
       automaticallyImplyLeading: !hasDrawer,
       elevation: 0,
       centerTitle: centerTitle,
+      iconTheme: const IconThemeData(color: AppColors.whiteColor),
       // ❌ شيلنا leading
       title: Text(
         title,

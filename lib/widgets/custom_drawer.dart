@@ -9,7 +9,7 @@ import 'package:study_platform/views/parent_views/link_child_view.dart';
 import 'package:study_platform/views/register_view.dart';
 
 class CustomDrawer extends StatefulWidget {
-  CustomDrawer({super.key});
+  const CustomDrawer({super.key});
 
   @override
   State<CustomDrawer> createState() => _CustomDrawerState();
