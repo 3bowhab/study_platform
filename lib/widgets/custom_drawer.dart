@@ -1,12 +1,16 @@
+// في ملف CustomDrawer.dart
+
 import 'package:flutter/material.dart';
 import 'package:study_platform/helper/app_colors_fonts.dart';
 import 'package:study_platform/helper/storage_service.dart';
 import 'package:study_platform/services/authentication/refresh_token_service.dart';
 import 'package:study_platform/services/settings/logout_service.dart';
 import 'package:study_platform/views/Drawer_views/settings_view.dart';
-import 'package:study_platform/views/Drawer_views/account_view.dart';
 import 'package:study_platform/views/parent_views/link_child_view.dart';
 import 'package:study_platform/views/register_view.dart';
+// 💡 استيراد ProfileView و ProfileRepository
+import 'package:study_platform/views/Drawer_views/profile_view.dart';
+import 'package:study_platform/services/account/profile_repository.dart';
 
 class CustomDrawer extends StatefulWidget {
   const CustomDrawer({super.key});
@@ -16,94 +20,142 @@ class CustomDrawer extends StatefulWidget {
 }
 
 class _CustomDrawerState extends State<CustomDrawer> {
+  // 💡 إضافة حالة التحميل
+  bool _isLoadingProfile = false;
+
+  // 💡 دالة جديدة لجلب بيانات البروفايل والانتقال للصفحة
+  Future<void> _fetchAndNavigateToProfile(BuildContext context) async {
+    // 💡 إظهار مؤشر التحميل
+    setState(() {
+      _isLoadingProfile = true;
+    });
+
+    try {
+      final profile = await ProfileRepository().getUserProfile();
+
+      if (!context.mounted) return;
+      // 💡 إغلاق الدرور قبل الانتقال
+      Navigator.of(context).pop();
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => ProfileView(profile: profile)),
+      );
+    } catch (e) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("❌ فشل تحميل بيانات الحساب: $e")));
+    } finally {
+      if (mounted) {
+        // 💡 إخفاء مؤشر التحميل
+        setState(() {
+          _isLoadingProfile = false;
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Directionality(
       textDirection: TextDirection.rtl,
-      child: Drawer(
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(25), // ✅ خلي الشمال مقفول
-            bottomLeft: Radius.circular(25), // ✅ الشمال مقفول
-          ),
-        ),
-        child: FutureBuilder<String?>(
-          future: StorageService().getUserType(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            }
+      child: Stack(
+        children: [
+          Drawer(
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(25), // ✅ خلي الشمال مقفول
+                bottomLeft: Radius.circular(25), // ✅ الشمال مقفول
+              ),
+            ),
+            child: FutureBuilder<String?>(
+              future: StorageService().getUserType(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
 
-            final userType = snapshot.data ?? "";
+                final userType = snapshot.data ?? "";
 
-            return ListView(
-              padding: EdgeInsets.zero,
-              children: [
-                customDrawerHeader(),
-                ListTile(
-                  leading: const Icon(
-                    Icons.settings,
-                    color: AppColors.primaryColor,
-                  ),
-                  title: const Text(
-                    'الحساب',
-                    style: TextStyle(fontFamily: AppFonts.mainFont),
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const AccountView(),
+                return ListView(
+                  padding: EdgeInsets.zero,
+                  children: [
+                    customDrawerHeader(),
+                    // 💡 تم تعديل هذا ListTile
+                    ListTile(
+                      leading: const Icon(
+                        Icons.settings,
+                        color: AppColors.primaryColor,
                       ),
-                    );
-                  },
-                ),
-                const Divider(height: 1),
-                ListTile(
-                  leading: const Icon(
-                    Icons.person,
-                    color: AppColors.primaryColor,
-                  ),
-                  title: const Text(
-                    'الإعدادات',
-                    style: TextStyle(fontFamily: AppFonts.mainFont),
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => SettingsView()),
-                    );
-                  },
-                ),
-                const Divider(height: 1),
+                      title: const Text(
+                        'الحساب',
+                        style: TextStyle(fontFamily: AppFonts.mainFont),
+                      ),
+                      onTap: () async {
+                        // 💡 استدعاء الدالة الجديدة
+                        await _fetchAndNavigateToProfile(context);
+                      },
+                    ),
+                    const Divider(height: 1),
+                    ListTile(
+                      leading: const Icon(
+                        Icons.person,
+                        color: AppColors.primaryColor,
+                      ),
+                      title: const Text(
+                        'الإعدادات',
+                        style: TextStyle(fontFamily: AppFonts.mainFont),
+                      ),
+                      onTap: () {
+                        // 💡 إغلاق الدرور قبل الانتقال
+                        Navigator.of(context).pop();
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SettingsView(),
+                          ),
+                        );
+                      },
+                    ),
+                    const Divider(height: 1),
 
-                if (userType.toLowerCase() == "parent")
-                  ListTile(
-                    leading: const Icon(
-                      Icons.family_restroom,
-                      color: AppColors.primaryColor,
-                    ),
-                    title: const Text(
-                      'حساب الابن',
-                      style: TextStyle(fontFamily: AppFonts.mainFont),
-                    ),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => LinkChildView(),
+                    if (userType.toLowerCase() == "parent")
+                      ListTile(
+                        leading: const Icon(
+                          Icons.family_restroom,
+                          color: AppColors.primaryColor,
                         ),
-                      );
-                    },
-                  ),
-                if (userType.toLowerCase() == "parent")
-                  const Divider(height: 1),
+                        title: const Text(
+                          'حساب الابن',
+                          style: TextStyle(fontFamily: AppFonts.mainFont),
+                        ),
+                        onTap: () {
+                          // 💡 إغلاق الدرور قبل الانتقال
+                          Navigator.of(context).pop();
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => LinkChildView(),
+                            ),
+                          );
+                        },
+                      ),
+                    if (userType.toLowerCase() == "parent")
+                      const Divider(height: 1),
 
-                logoutTile(context),
-              ],
-            );
-          },
-        ),
+                    logoutTile(context),
+                  ],
+                );
+              },
+            ),
+          ),
+          // 💡 إضافة مؤشر التحميل فوق الدرور
+          if (_isLoadingProfile)
+            const ModalBarrier(dismissible: false, color: Colors.black54),
+          if (_isLoadingProfile)
+            const Center(child: CircularProgressIndicator()),
+        ],
       ),
     );
   }
@@ -135,10 +187,7 @@ DrawerHeader customDrawerHeader() {
   return DrawerHeader(
     decoration: const BoxDecoration(
       gradient: LinearGradient(
-        colors: [
-          AppColors.primaryColor,
-          AppColors.gradientColor
-        ],
+        colors: [AppColors.primaryColor, AppColors.gradientColor],
         begin: Alignment.topRight,
         end: Alignment.bottomLeft,
       ),
