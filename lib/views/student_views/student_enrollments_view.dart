@@ -1,10 +1,9 @@
-// ignore_for_file: prefer_final_fields
-
 import 'package:flutter/material.dart';
 import 'package:study_platform/helper/app_colors_fonts.dart';
 import 'package:study_platform/models/student_models/enrollment_model.dart';
 import 'package:study_platform/models/student_models/course_model.dart';
 import 'package:study_platform/models/student_models/my_courses_service.dart';
+import 'package:study_platform/services/authentication/handle_authentication_error.dart';
 import 'package:study_platform/services/student/get_enrollment_service.dart';
 import 'package:study_platform/views/student_views/course_details_view.dart';
 import 'package:study_platform/widgets/app_bar.dart';
@@ -62,7 +61,7 @@ class _StudentEnrollmentsViewState extends State<StudentEnrollmentsView> {
     }
   }
 
-  Future<void> _fetchMyCourses() async {
+Future<void> _fetchMyCourses() async {
     try {
       final data = await _myCoursesService.getMyCourses();
       if (!mounted) {
@@ -76,6 +75,14 @@ class _StudentEnrollmentsViewState extends State<StudentEnrollmentsView> {
       if (!mounted) {
         return;
       }
+      // 💡 تعديل هنا: استدعي الدالة وارجع بعدها على طول
+      handleAuthenticationError(context, e.toString());
+
+      // 💡 لو الدالة المساعدة لم ترجع، كمل تنفيذ الكود
+      if (!context.mounted) {
+        return;
+      }
+
       setState(() {
         errorCourses = e.toString();
         isLoadingCourses = false;
@@ -90,10 +97,9 @@ class _StudentEnrollmentsViewState extends State<StudentEnrollmentsView> {
         _showAllEnrollments ? enrollments : enrollments.take(3).toList();
 
     // final visibleCourses =
-    //     _showAllCourses ? myCourses : myCourses.take(3).toList();
+    //      _showAllCourses ? myCourses : myCourses.take(3).toList();
 
     final visibleCourses = myCourses;
-
 
     return Scaffold(
       appBar: const GradientAppBar(title: "اشتراكاتى", hasDrawer: true),
@@ -115,7 +121,7 @@ class _StudentEnrollmentsViewState extends State<StudentEnrollmentsView> {
               //   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               // ),
               // const SizedBox(height: 8),
-        
+
               // if (isLoadingEnrollments)
               //   const Center(child: CircularProgressIndicator())
               // else if (errorEnrollments != null)
@@ -155,9 +161,9 @@ class _StudentEnrollmentsViewState extends State<StudentEnrollmentsView> {
               //       ),
               //     ),
               // ],
-        
+
               // const SizedBox(height: 24),
-        
+
               // ================== My Courses ==================
               // const Text(
               //   "📚 My Courses",
@@ -172,7 +178,10 @@ class _StudentEnrollmentsViewState extends State<StudentEnrollmentsView> {
                 Center(
                   child: const Text(
                     "لم تقم بالاشتراك في أي دورة حتى الآن.",
-                    style: TextStyle(fontFamily: AppFonts.mainFont, fontSize: 16),
+                    style: TextStyle(
+                      fontFamily: AppFonts.mainFont,
+                      fontSize: 16,
+                    ),
                   ),
                 )
               else ...[
@@ -182,7 +191,8 @@ class _StudentEnrollmentsViewState extends State<StudentEnrollmentsView> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => CourseDetailsView(courseId: course.id),
+                          builder:
+                              (_) => CourseDetailsView(courseId: course.id),
                         ),
                       );
                     },
@@ -233,7 +243,9 @@ class _StudentEnrollmentsViewState extends State<StudentEnrollmentsView> {
                                           return Container(
                                             width: double.infinity,
                                             height: 150,
-                                            color: Colors.white.withOpacity(0.2),
+                                            color: Colors.white.withOpacity(
+                                              0.2,
+                                            ),
                                             child: const Icon(
                                               Icons.broken_image,
                                               size: 50,
@@ -253,7 +265,7 @@ class _StudentEnrollmentsViewState extends State<StudentEnrollmentsView> {
                                         ),
                                       ),
                             ),
-        
+
                             Padding(
                               padding: const EdgeInsets.all(14),
                               child: Column(
@@ -278,9 +290,9 @@ class _StudentEnrollmentsViewState extends State<StudentEnrollmentsView> {
                                       color: Colors.white70,
                                     ),
                                   ),
-        
+
                                   const SizedBox(height: 12),
-        
+
                                   // ====== Chips ======
                                   Row(
                                     mainAxisAlignment:
@@ -300,9 +312,9 @@ class _StudentEnrollmentsViewState extends State<StudentEnrollmentsView> {
                                       ),
                                     ],
                                   ),
-        
+
                                   const SizedBox(height: 12),
-        
+
                                   // ====== السعر والـ Rating ======
                                   Row(
                                     mainAxisAlignment:
@@ -375,6 +387,7 @@ class _StudentEnrollmentsViewState extends State<StudentEnrollmentsView> {
                 //       },
                 //     ),
                 //   ),
+                const SizedBox(height: 100),
               ],
             ],
           ),
@@ -396,7 +409,7 @@ class _StudentEnrollmentsViewState extends State<StudentEnrollmentsView> {
         ),
       ),
       backgroundColor: Colors.white24,
-      padding: const EdgeInsets.symmetric(horizontal: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 4),
     );
   }
 

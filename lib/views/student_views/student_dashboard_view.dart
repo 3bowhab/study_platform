@@ -139,6 +139,7 @@ class _StudentDashboardViewState extends State<StudentDashboardView> {
                           );
                         }).toList(),
                   ),
+                const SizedBox(height: 50),
               ],
             ),
           ),

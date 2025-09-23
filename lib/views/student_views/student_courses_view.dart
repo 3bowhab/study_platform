@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:study_platform/helper/app_colors_fonts.dart';
 import 'package:study_platform/models/student_models/course_model.dart';
+import 'package:study_platform/services/authentication/handle_authentication_error.dart';
 import 'package:study_platform/services/student/post_enrollment_service.dart';
 import 'package:study_platform/services/student/student_courses_service.dart';
 import 'package:study_platform/widgets/app_bar.dart'; // Make sure this import is correct
@@ -46,11 +47,16 @@ class _StudentCoursesViewState extends State<StudentCoursesView> {
         isLoading = false;
       });
     } catch (e) {
-      if (!mounted) return;
-      setState(() {
-        errorMessage = e.toString();
-        isLoading = false;
-      });
+      if (!mounted) {
+        return;
+      }
+      // 💡 تعديل هنا: استدعي الدالة وارجع بعدها على طول
+      handleAuthenticationError(context, e.toString());
+
+      // 💡 لو الدالة المساعدة لم ترجع، كمل تنفيذ الكود
+      if (!context.mounted) {
+        return;
+      }
     }
   }
 
@@ -403,32 +409,41 @@ class _StudentCoursesViewState extends State<StudentCoursesView> {
                                                     ),
                                                   ),
                                                   const SizedBox(height: 16),
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
+                                                  Column(
                                                     children: [
-                                                      _buildInfoChip(
-                                                        Icons
-                                                            .access_time_rounded,
-                                                        "${c.durationHours ?? 0} ساعة",
-                                                        Colors.orange,
+                                                      Row(
+                                                        children: [
+                                                          _buildInfoChip(
+                                                            Icons
+                                                                .access_time_rounded,
+                                                            "${c.durationHours ?? 0} ساعة",
+                                                            Colors.orange,
+                                                          ),
+                                                          const SizedBox(width: 8),
+                                                          _buildInfoChip(
+                                                            Icons
+                                                                .article_outlined,
+                                                            "${c.totalSections ?? 0} قسم",
+                                                            Colors.purple,
+                                                          ),
+                                                        ],
                                                       ),
-                                                      _buildInfoChip(
-                                                        Icons.article_outlined,
-                                                        "${c.totalSections ?? 0} قسم",
-                                                        Colors.purple,
-                                                      ),
-                                                      _buildInfoChip(
-                                                        Icons.quiz,
-                                                        "${c.totalQuizzes ?? 0} اختبار",
-                                                        Colors.teal,
-                                                      ),
-                                                      _buildInfoChip(
-                                                        Icons
-                                                            .people_alt_rounded,
-                                                        "${c.totalEnrollments ?? 0} مشترك",
-                                                        Colors.indigo,
+                                                      const SizedBox(height: 8),
+                                                      Row(
+                                                        children: [
+                                                          _buildInfoChip(
+                                                            Icons.quiz,
+                                                            "${c.totalQuizzes ?? 0} اختبار",
+                                                            Colors.teal,
+                                                          ),
+                                                          const SizedBox(width: 8),
+                                                          _buildInfoChip(
+                                                            Icons
+                                                                .people_alt_rounded,
+                                                            "${c.totalEnrollments ?? 0} مشترك",
+                                                            Colors.indigo,
+                                                          ),
+                                                        ],
                                                       ),
                                                     ],
                                                   ),
@@ -526,6 +541,7 @@ class _StudentCoursesViewState extends State<StudentCoursesView> {
                             }, childCount: courses.length),
                           ),
                         ),
+                        SliverToBoxAdapter(child: const SizedBox(height: 100)),
                       ],
                     ),
                   ),

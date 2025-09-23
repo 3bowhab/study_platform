@@ -26,7 +26,7 @@ class _StudentBottomNavState extends State<StudentBottomNav> {
       extendBody: true, // يخلي البوتوم ناف يبان فوق الخلفية
       body: _pages[_currentIndex],
       bottomNavigationBar: Container(
-        margin: const EdgeInsets.all(12),
+        margin: const EdgeInsets.only(left: 12, right: 12, bottom: 50, top: 10),
         decoration: BoxDecoration(
           gradient: const LinearGradient(
             colors: [AppColors.primaryColor, AppColors.gradientColor],
@@ -43,7 +43,7 @@ class _StudentBottomNavState extends State<StudentBottomNav> {
           ],
         ),
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+          padding: const EdgeInsets.symmetric(vertical: 8),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
@@ -68,7 +68,7 @@ class _StudentBottomNavState extends State<StudentBottomNav> {
       },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
         decoration:
             isSelected
                 ? BoxDecoration(

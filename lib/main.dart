@@ -46,6 +46,7 @@ class MyApp extends StatelessWidget {
     required this.seenOnboarding,
   });
 
+  
   @override
   Widget build(BuildContext context) {
     Widget home;
@@ -69,7 +70,8 @@ class MyApp extends StatelessWidget {
           home = const RegisterView();
       }
     }
-
-    return MaterialApp(title: 'Study Platform', home: home);
+    
+    return MaterialApp(title: 'Study Platform', home: home, debugShowCheckedModeBanner: false,
+    );
   }
 }

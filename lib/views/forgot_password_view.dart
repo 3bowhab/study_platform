@@ -90,16 +90,33 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                           child: FadeInUp(
                             duration: const Duration(milliseconds: 1600),
                             child: Container(
-                              margin: const EdgeInsets.only(top: 10),
+                              margin: const EdgeInsets.only(
+                                top: 50,
+                              ), // 💡 تم تعديل الـ margin
                               child: const Center(
-                                child: Text(
-                                  "نسيت كلمة المرور",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 23,
-                                    fontFamily: AppFonts.mainFont,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                child: Column(
+                                  // 💡 استخدام Column لترتيب النصوص فوق بعضها
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      "نسيت كلمة",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 28,
+                                        fontFamily: AppFonts.mainFont,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    Text(
+                                      "المرور",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 28,
+                                        fontFamily: AppFonts.mainFont,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),

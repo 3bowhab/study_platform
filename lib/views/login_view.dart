@@ -75,7 +75,7 @@ class _LoginViewState extends State<LoginView> {
                         ),
                         Positioned(
                           right: 40,
-                          top: 40,
+                          top: 30,
                           width: 80,
                           height: 150,
                           child: FadeInUp(
@@ -105,7 +105,7 @@ class _LoginViewState extends State<LoginView> {
                                   "تسجيل الدخول",
                                   style: TextStyle(
                                     color: Colors.white,
-                                    fontSize: 30,
+                                    fontSize: 25,
                                     fontFamily: AppFonts.mainFont,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -118,7 +118,7 @@ class _LoginViewState extends State<LoginView> {
                     ),
                   ),
 
-                  const SizedBox(height: 20), 
+                  const SizedBox(height: 20),
 
                   // 🔹 الجزء السفلي (الفورم الحقيقي بتاعك + logic)
                   Padding(
@@ -135,7 +135,8 @@ class _LoginViewState extends State<LoginView> {
                               child: Column(
                                 children: [
                                   CustomTextField(
-                                    labelText: "اسم المستخدم أو البريد الإلكتروني",
+                                    labelText:
+                                        "اسم المستخدم أو البريد الإلكتروني",
                                     validator: AppValidators.requiredField,
                                     onsaved: (newValue) {
                                       usernameOrEmail = newValue;
@@ -152,22 +153,22 @@ class _LoginViewState extends State<LoginView> {
                               ),
                             ),
                             const SizedBox(height: 30),
-                        
+
                             // 🔹 زرار اللوجين
                             FadeInUp(
                               duration: const Duration(milliseconds: 1900),
                               child: loginButton(context),
                             ),
                             const SizedBox(height: 20),
-                        
+
                             // 🔹 Register link
                             FadeInUp(
                               duration: const Duration(milliseconds: 2000),
                               child: goToRegisterView(context),
                             ),
-                        
+
                             const SizedBox(height: 20),
-                        
+
                             // 🔹 Forgot password
                             FadeInUp(
                               duration: const Duration(milliseconds: 2100),
@@ -257,7 +258,13 @@ class _LoginViewState extends State<LoginView> {
           setState(() => autovalidateMode = AutovalidateMode.always);
         }
       },
-      child: const Text("تسجيل الدخول", style: TextStyle(color: AppColors.whiteColor, fontFamily: AppFonts.mainFont)),
+      child: const Text(
+        "تسجيل الدخول",
+        style: TextStyle(
+          color: AppColors.whiteColor,
+          fontFamily: AppFonts.mainFont,
+        ),
+      ),
     );
   }
 
@@ -265,7 +272,10 @@ class _LoginViewState extends State<LoginView> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Text("لا تملك حساب؟", style: TextStyle(fontFamily: AppFonts.mainFont)),
+        const Text(
+          "لا تملك حساب؟",
+          style: TextStyle(fontFamily: AppFonts.mainFont),
+        ),
         TextButton(
           onPressed: () {
             Navigator.pushReplacement(
@@ -273,7 +283,10 @@ class _LoginViewState extends State<LoginView> {
               MaterialPageRoute(builder: (context) => const RegisterView()),
             );
           },
-          child: const Text("انشاء حساب جديد", style: TextStyle(fontFamily: AppFonts.mainFont)),
+          child: const Text(
+            "انشاء حساب جديد",
+            style: TextStyle(fontFamily: AppFonts.mainFont),
+          ),
         ),
       ],
     );
@@ -281,7 +294,7 @@ class _LoginViewState extends State<LoginView> {
 
   TextButton requestResetPassword(BuildContext context) {
     return TextButton(
-      onPressed: (){
+      onPressed: () {
         // setState(() => isLoading = true);
         // try {
         //   await passwordResetService.requestPasswordReset();
@@ -290,7 +303,7 @@ class _LoginViewState extends State<LoginView> {
         //   ScaffoldMessenger.of(context).showSnackBar(
         //     const SnackBar(content: Text("📩 رابط إعادة التعيين اتبعت لبريدك")),
         //   );
-          
+
         // } catch (e) {
         //   setState(() => isLoading = false);
         //   ScaffoldMessenger.of(
@@ -302,7 +315,10 @@ class _LoginViewState extends State<LoginView> {
           MaterialPageRoute(builder: (context) => const ForgotPasswordView()),
         );
       },
-      child: const Text("نسيت كلمة المرور؟", style: TextStyle(fontFamily: AppFonts.mainFont)),
+      child: const Text(
+        "نسيت كلمة المرور؟",
+        style: TextStyle(fontFamily: AppFonts.mainFont),
+      ),
     );
   }
 }

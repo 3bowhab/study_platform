@@ -369,7 +369,10 @@ class _CourseDetailsViewState extends State<CourseDetailsView> {
                                         childCount: course!.course.sections.length,
                                       ),
                                     ),
-                                  ],
+                              SliverToBoxAdapter(
+                                child: const SizedBox(height: 50),
+                              ),
+                            ],
                                 ),
                 ),
               ),

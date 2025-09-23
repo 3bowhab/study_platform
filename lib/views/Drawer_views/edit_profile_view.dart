@@ -396,6 +396,7 @@ class _EditProfileViewState extends State<EditProfileView> {
 
                     const SizedBox(height: 20),
                     editProfileButton(context),
+                    const SizedBox(height: 40),
                   ],
                 ),
               ),

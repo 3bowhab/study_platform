@@ -77,7 +77,7 @@ class _RegisterViewState extends State<RegisterView> {
                         ),
                         Positioned(
                           right: 40,
-                          top: 40,
+                          top: 35,
                           width: 80,
                           height: 150,
                           child: FadeInUp(
@@ -213,6 +213,7 @@ class _RegisterViewState extends State<RegisterView> {
                               duration: const Duration(milliseconds: 2000),
                               child: goToLoginView(context),
                             ),
+                            const SizedBox(height: 20),
                           ],
                         ),
                       ),

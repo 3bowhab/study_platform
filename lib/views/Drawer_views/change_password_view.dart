@@ -102,20 +102,37 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
                               child: Image.asset("assets/images/clock.png"),
                             ),
                           ),
+                          // الجزء المعدل في الكود
                           Positioned(
                             child: FadeInUp(
                               duration: const Duration(milliseconds: 1600),
                               child: Container(
                                 margin: const EdgeInsets.only(top: 50),
                                 child: const Center(
-                                  child: Text(
-                                    "تغيير كلمة المرور",
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 23,
-                                      fontFamily: AppFonts.mainFont,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                  child: Column(
+                                    mainAxisSize:
+                                        MainAxisSize
+                                            .min, // 💡 جديد: يجعل العمود يأخذ أقل مساحة ممكنة
+                                    children: [
+                                      Text(
+                                        "تغيير كلمة",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 28,
+                                          fontFamily: AppFonts.mainFont,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      Text(
+                                        "المرور",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 28,
+                                          fontFamily: AppFonts.mainFont,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ),

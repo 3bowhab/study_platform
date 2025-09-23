@@ -27,13 +27,14 @@ class _QuizAttemptViewState extends State<QuizAttemptView> {
   bool _isSubmitting = false;
 
   late Timer _timer;
-  int? _remainingTime;
+  int? _remainingTimeInSeconds; // 💡 تم التغيير ليكون بالثواني
   int? _totalPoints;
 
   @override
   void initState() {
     super.initState();
-    _remainingTime = widget.quiz.timeLimitMinutes;
+    // 💡 تحويل الدقائق إلى ثواني
+    _remainingTimeInSeconds = (widget.quiz.timeLimitMinutes) * 60;
     _startTimer();
     _calculateTotalPoints();
 
@@ -49,20 +50,21 @@ class _QuizAttemptViewState extends State<QuizAttemptView> {
     }
   }
 
+  // 💡 تم تعديل هذه الدالة للعمل بالثواني
   void _startTimer() {
-    if (_remainingTime == null) return;
-    const oneMinute = Duration(minutes: 1);
-    _timer = Timer.periodic(oneMinute, (timer) {
+    if (_remainingTimeInSeconds == null) return;
+    const oneSecond = Duration(seconds: 1);
+    _timer = Timer.periodic(oneSecond, (timer) {
       if (!mounted) {
         timer.cancel();
         return;
       }
-      if ((_remainingTime ?? 0) == 0) {
+      if ((_remainingTimeInSeconds ?? 0) == 0) {
         timer.cancel();
         _showTimeoutDialog();
       } else {
         setState(() {
-          _remainingTime = (_remainingTime ?? 0) - 1;
+          _remainingTimeInSeconds = (_remainingTimeInSeconds ?? 0) - 1;
         });
       }
     });
@@ -90,10 +92,11 @@ class _QuizAttemptViewState extends State<QuizAttemptView> {
               textAlign: TextAlign.center,
             ),
             content: Text(
-              "لقد انتهى الوقت المخصص للإجابة على الاختبار. سيتم إرسال إجاباتك الحالية.",
+              "لقد انتهى الوقت المخصص للإجابة على الاختبار. لن يتم إرسال إجاباتك.",
               style: TextStyle(fontFamily: AppFonts.mainFont, fontSize: 16),
               textAlign: TextAlign.center,
             ),
+            // 💡 إضافة زر "متابعة" للعودة لصفحة الدورة
             actionsAlignment: MainAxisAlignment.center,
             actions: <Widget>[
               ElevatedButton(
@@ -105,8 +108,8 @@ class _QuizAttemptViewState extends State<QuizAttemptView> {
                   ),
                 ),
                 onPressed: () {
-                  Navigator.pop(dialogContext);
-                  _submitQuiz();
+                  Navigator.pop(dialogContext); // يغلق النافذة المنبثقة
+                  Navigator.pop(context); // يرجع إلى صفحة الدورة
                 },
                 child: Text(
                   "متابعة",
@@ -331,19 +334,25 @@ class _QuizAttemptViewState extends State<QuizAttemptView> {
 
   @override
   Widget build(BuildContext context) {
+    // 💡 دالة مساعدة لتحويل الثواني إلى صيغة دقائق:ثواني
+    String formatTime(int totalSeconds) {
+      final minutes = (totalSeconds ~/ 60).toString().padLeft(2, '0');
+      final seconds = (totalSeconds % 60).toString().padLeft(2, '0');
+      return '$minutes:$seconds';
+    }
+
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        // 💡 تم استبدال SliverAppBar بـ GradientAppBar
         appBar: GradientAppBar(
           title: widget.quiz.title,
           actions: [
-            // 💡 إضافة الوقت المتبقي في actions
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Center(
+                // 💡 عرض الوقت بالثواني
                 child: Text(
-                  '⏱️الوقت المتبقى: ${_remainingTime ?? "..."} دقيقة',
+                  '⏱️الوقت المتبقى: ${formatTime(_remainingTimeInSeconds ?? 0)}',
                   style: const TextStyle(
                     fontFamily: AppFonts.mainFont,
                     fontSize: 16,
@@ -357,7 +366,6 @@ class _QuizAttemptViewState extends State<QuizAttemptView> {
         body: RefreshIndicator(
           onRefresh: _refreshQuiz,
           child: SingleChildScrollView(
-            // 💡 استخدام SingleChildScrollView بدلاً من CustomScrollView
             physics: const AlwaysScrollableScrollPhysics(),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -469,12 +477,19 @@ class _QuizAttemptViewState extends State<QuizAttemptView> {
                     );
                   },
                 ),
+                // 💡 إضافة مسافة أسفل آخر سؤال
+                const SizedBox(height: 20),
               ],
             ),
           ),
         ),
         bottomNavigationBar: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.only(
+            bottom: 50,
+            left: 16,
+            right: 16,
+            top: 8,
+          ),
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primaryColor,

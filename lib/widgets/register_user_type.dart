@@ -27,20 +27,22 @@ class _RegisterUserTypeState extends State<RegisterUserType> {
       children: [
         const Text(
           "اختر نوع المستخدم:",
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: AppFonts.mainFont),
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            fontFamily: AppFonts.mainFont,
+          ),
         ),
         const SizedBox(height: 16),
 
         Row(
-          mainAxisAlignment: MainAxisAlignment.start, // 👈 يثبتهم ناحية البداية
+          mainAxisAlignment: MainAxisAlignment.center, // 👈 يثبتهم ناحية البداية
           children:
               options.map((opt) {
                 final isSelected = userType == opt["value"];
 
                 return Padding(
-                  padding: const EdgeInsets.only(
-                    right: 8,
-                  ), // مسافة بسيطة بين الكروت
+                  padding: const EdgeInsets.only(left: 5),
                   child: InkWell(
                     onTap: () {
                       setState(() {
@@ -54,22 +56,25 @@ class _RegisterUserTypeState extends State<RegisterUserType> {
                       duration: const Duration(milliseconds: 250),
                       padding: const EdgeInsets.symmetric(
                         vertical: 12,
-                        horizontal: 10,
                       ),
                       width: 95,
                       decoration: BoxDecoration(
-                        color:  Colors.white,
+                        color: Colors.white,
                         borderRadius: BorderRadius.circular(10),
                         border: Border.all(
                           color:
-                              isSelected ? AppColors.primaryColor : AppColors.grayColor,
+                              isSelected
+                                  ? AppColors.primaryColor
+                                  : AppColors.grayColor,
                           width: isSelected ? 2 : 1,
                         ),
                         boxShadow:
                             isSelected
                                 ? [
                                   BoxShadow(
-                                    color: AppColors.primaryColor.withOpacity(0.3),
+                                    color: AppColors.primaryColor.withOpacity(
+                                      0.3,
+                                    ),
                                     blurRadius: 6,
                                     offset: const Offset(0, 3),
                                   ),
@@ -83,7 +88,9 @@ class _RegisterUserTypeState extends State<RegisterUserType> {
                             opt["icon"] as IconData,
                             size: 28,
                             color:
-                                isSelected ? AppColors.primaryColor : AppColors.grayColor,
+                                isSelected
+                                    ? AppColors.primaryColor
+                                    : AppColors.grayColor,
                           ),
                           const SizedBox(height: 6),
                           Text(
