@@ -24,7 +24,7 @@ class _CourseDetailsViewState extends State<CourseDetailsView> {
   bool isLoading = true;
   String? error;
   bool _isPageLoading = false; // متغير جديد للتحميل على مستوى الصفحة
-
+//المحاولات
   @override
   void initState() {
     super.initState();

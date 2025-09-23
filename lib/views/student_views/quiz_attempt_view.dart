@@ -1,11 +1,9 @@
-// quiz_attempt_view.dart
-
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:study_platform/helper/app_colors_fonts.dart';
 import 'package:study_platform/models/student_models/quiz_model.dart';
 import 'package:study_platform/services/student/quiz_service.dart';
-import 'quiz_result_view.dart'; // إضافة استدعاء لصفحة النتائج الجديدة
+import 'package:study_platform/widgets/app_bar.dart';
 
 class QuizAttemptView extends StatefulWidget {
   final int courseId;
@@ -61,13 +59,65 @@ class _QuizAttemptViewState extends State<QuizAttemptView> {
       }
       if ((_remainingTime ?? 0) == 0) {
         timer.cancel();
-        _submitQuiz();
+        _showTimeoutDialog();
       } else {
         setState(() {
           _remainingTime = (_remainingTime ?? 0) - 1;
         });
       }
     });
+  }
+
+  void _showTimeoutDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext dialogContext) {
+        return Directionality(
+          textDirection: TextDirection.rtl,
+          child: AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            title: Text(
+              "انتهى الوقت",
+              style: TextStyle(
+                fontFamily: AppFonts.mainFont,
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: Colors.red,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            content: Text(
+              "لقد انتهى الوقت المخصص للإجابة على الاختبار. سيتم إرسال إجاباتك الحالية.",
+              style: TextStyle(fontFamily: AppFonts.mainFont, fontSize: 16),
+              textAlign: TextAlign.center,
+            ),
+            actionsAlignment: MainAxisAlignment.center,
+            actions: <Widget>[
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primaryColor,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.pop(dialogContext);
+                  _submitQuiz();
+                },
+                child: Text(
+                  "متابعة",
+                  style: TextStyle(fontFamily: AppFonts.mainFont),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -108,18 +158,7 @@ class _QuizAttemptViewState extends State<QuizAttemptView> {
 
       if (!mounted) return;
 
-      // ⚠️ التغيير هنا: الانتقال إلى صفحة النتائج الجديدة
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder:
-              (_) => QuizResultView(
-                quiz: widget.quiz,
-                submissionResult: result,
-                selectedAnswers: _selectedAnswers,
-              ),
-        ),
-      );
+      _showResultDialog(context, result);
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -136,7 +175,124 @@ class _QuizAttemptViewState extends State<QuizAttemptView> {
     }
   }
 
-  // باقي الكود كما هو...
+  void _showResultDialog(BuildContext context, Map<String, dynamic> result) {
+    bool isPassed = result['is_passed'] ?? false;
+    Color statusColor = isPassed ? Colors.green : Colors.red;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext dialogContext) {
+        return Directionality(
+          textDirection: TextDirection.rtl,
+          child: AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            title: Text(
+              isPassed ? "تهانينا! لقد نجحت 🎉" : "حظًا أوفر! لقد رسبت ❌",
+              style: TextStyle(
+                fontFamily: AppFonts.mainFont,
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: statusColor,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      SizedBox(
+                        height: 100,
+                        width: 100,
+                        child: CircularProgressIndicator(
+                          value: (result['score'] as num) / 100,
+                          strokeWidth: 8,
+                          backgroundColor: Colors.grey.shade300,
+                          color: statusColor,
+                        ),
+                      ),
+                      Text(
+                        "${(result['score'] as num).toStringAsFixed(0)}%",
+                        style: TextStyle(
+                          fontFamily: AppFonts.mainFont,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.primaryColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  _buildInfoRow(
+                    "✅ الإجابات الصحيحة",
+                    "${result['correct_answers']}/${result['total_questions']}",
+                  ),
+                  _buildInfoRow(
+                    "⏱ الوقت المستغرق",
+                    "${result['time_taken_minutes']} دقيقة",
+                  ),
+                ],
+              ),
+            ),
+            actionsAlignment: MainAxisAlignment.center,
+            actions: <Widget>[
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primaryColor,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.pop(dialogContext);
+                  Navigator.pop(context);
+                },
+                child: Text(
+                  "العودة إلى الدورة",
+                  style: TextStyle(fontFamily: AppFonts.mainFont),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildInfoRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              fontFamily: AppFonts.mainFont,
+              fontSize: 16,
+              color: Colors.grey[700],
+            ),
+          ),
+          Text(
+            value,
+            style: TextStyle(
+              fontFamily: AppFonts.mainFont,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: AppColors.primaryColor,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<void> _refreshQuiz() async {
     await Future.delayed(const Duration(milliseconds: 1500));
     if (!mounted) return;
@@ -178,62 +334,35 @@ class _QuizAttemptViewState extends State<QuizAttemptView> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        body: RefreshIndicator(
-          onRefresh: _refreshQuiz,
-          child: CustomScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            slivers: [
-              SliverAppBar(
-                expandedHeight: 180.0,
-                floating: false,
-                pinned: true,
-                iconTheme: const IconThemeData(color: Colors.white),
-                flexibleSpace: FlexibleSpaceBar(
-                  titlePadding: const EdgeInsets.only(
-                    bottom: 24.0,
-                    right: 24.0,
-                    left: 24.0,
-                  ),
-                  centerTitle: true,
-                  title: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        widget.quiz.title,
-                        style: const TextStyle(
-                          fontFamily: AppFonts.mainFont,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                          color: Colors.white,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        '⏱️ الوقت المتبقي: ${_remainingTime ?? "..."} دقيقة',
-                        style: const TextStyle(
-                          fontFamily: AppFonts.mainFont,
-                          fontSize: 14,
-                          color: Colors.white70,
-                        ),
-                      ),
-                    ],
-                  ),
-                  background: Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          AppColors.primaryColor,
-                          AppColors.gradientColor,
-                        ],
-                        begin: Alignment.topRight,
-                        end: Alignment.bottomLeft,
-                      ),
-                    ),
+        // 💡 تم استبدال SliverAppBar بـ GradientAppBar
+        appBar: GradientAppBar(
+          title: widget.quiz.title,
+          actions: [
+            // 💡 إضافة الوقت المتبقي في actions
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Center(
+                child: Text(
+                  '⏱️الوقت المتبقى: ${_remainingTime ?? "..."} دقيقة',
+                  style: const TextStyle(
+                    fontFamily: AppFonts.mainFont,
+                    fontSize: 16,
+                    color: Colors.white,
                   ),
                 ),
               ),
-              SliverToBoxAdapter(
-                child: Padding(
+            ),
+          ],
+        ),
+        body: RefreshIndicator(
+          onRefresh: _refreshQuiz,
+          child: SingleChildScrollView(
+            // 💡 استخدام SingleChildScrollView بدلاً من CustomScrollView
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Text(
                     'مجموع النقاط: ${_totalPoints ?? "..."} نقطة',
@@ -245,11 +374,11 @@ class _QuizAttemptViewState extends State<QuizAttemptView> {
                     ),
                   ),
                 ),
-              ),
-              SliverPadding(
-                padding: const EdgeInsets.all(16.0),
-                sliver: SliverList(
-                  delegate: SliverChildBuilderDelegate((context, index) {
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: widget.quiz.questions.length,
+                  itemBuilder: (context, index) {
                     final question = widget.quiz.questions[index];
                     final qId = question.id;
                     final isSelected = _selectedAnswers[qId] != -1;
@@ -266,7 +395,10 @@ class _QuizAttemptViewState extends State<QuizAttemptView> {
                                 )
                                 : BorderSide.none,
                       ),
-                      margin: const EdgeInsets.symmetric(vertical: 8),
+                      margin: const EdgeInsets.symmetric(
+                        vertical: 8,
+                        horizontal: 16,
+                      ),
                       child: Padding(
                         padding: const EdgeInsets.all(12),
                         child: Column(
@@ -335,10 +467,10 @@ class _QuizAttemptViewState extends State<QuizAttemptView> {
                         ),
                       ),
                     );
-                  }, childCount: widget.quiz.questions.length),
+                  },
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
         bottomNavigationBar: Padding(
