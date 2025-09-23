@@ -1,16 +1,16 @@
-// في ملف CustomDrawer.dart
-
 import 'package:flutter/material.dart';
 import 'package:study_platform/helper/app_colors_fonts.dart';
 import 'package:study_platform/helper/storage_service.dart';
 import 'package:study_platform/services/authentication/refresh_token_service.dart';
 import 'package:study_platform/services/settings/logout_service.dart';
-import 'package:study_platform/views/Drawer_views/settings_view.dart';
 import 'package:study_platform/views/parent_views/link_child_view.dart';
 import 'package:study_platform/views/register_view.dart';
 // 💡 استيراد ProfileView و ProfileRepository
 import 'package:study_platform/views/Drawer_views/profile_view.dart';
 import 'package:study_platform/services/account/profile_repository.dart';
+// 💡 استيراد ChangePasswordView و DeleteAccountService
+import 'package:study_platform/views/Drawer_views/change_password_view.dart';
+import 'package:study_platform/services/settings/delete_account_service.dart';
 
 class CustomDrawer extends StatefulWidget {
   const CustomDrawer({super.key});
@@ -20,12 +20,10 @@ class CustomDrawer extends StatefulWidget {
 }
 
 class _CustomDrawerState extends State<CustomDrawer> {
-  // 💡 إضافة حالة التحميل
   bool _isLoadingProfile = false;
+  bool _isDeletingAccount = false;
 
-  // 💡 دالة جديدة لجلب بيانات البروفايل والانتقال للصفحة
   Future<void> _fetchAndNavigateToProfile(BuildContext context) async {
-    // 💡 إظهار مؤشر التحميل
     setState(() {
       _isLoadingProfile = true;
     });
@@ -34,7 +32,6 @@ class _CustomDrawerState extends State<CustomDrawer> {
       final profile = await ProfileRepository().getUserProfile();
 
       if (!context.mounted) return;
-      // 💡 إغلاق الدرور قبل الانتقال
       Navigator.of(context).pop();
 
       Navigator.push(
@@ -48,11 +45,100 @@ class _CustomDrawerState extends State<CustomDrawer> {
       ).showSnackBar(SnackBar(content: Text("❌ فشل تحميل بيانات الحساب: $e")));
     } finally {
       if (mounted) {
-        // 💡 إخفاء مؤشر التحميل
         setState(() {
           _isLoadingProfile = false;
         });
       }
+    }
+  }
+
+  Future<void> _deleteAccount() async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder:
+          (dialogContext) => Directionality(
+            textDirection: TextDirection.rtl,
+            child: AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              title: Text(
+                "تأكيد الحذف",
+                style: TextStyle(
+                  fontFamily: AppFonts.mainFont,
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.red.shade700,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              content: const Text(
+                "هل أنت متأكد أنك تريد حذف الحساب؟ لا يمكن التراجع بعد ذلك.",
+                style: TextStyle(
+                  fontFamily: AppFonts.mainFont,
+                  fontSize: 16,
+                  color: Colors.black87,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              actionsAlignment: MainAxisAlignment.center,
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(dialogContext, false),
+                  child: Text(
+                    "إلغاء",
+                    style: TextStyle(
+                      fontFamily: AppFonts.mainFont,
+                      color: AppColors.primaryColor,
+                    ),
+                  ),
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red.shade700,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  onPressed: () => Navigator.pop(dialogContext, true),
+                  child: const Text(
+                    "حذف",
+                    style: TextStyle(fontFamily: AppFonts.mainFont),
+                  ),
+                ),
+              ],
+            ),
+          ),
+    );
+
+    if (confirm != true) return;
+
+    if (!mounted) return;
+    setState(() => _isDeletingAccount = true);
+
+    try {
+      await DeleteAccountService().deleteAccount();
+      await StorageService().logout();
+
+      if (!mounted) return;
+      setState(() => _isDeletingAccount = false);
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("✅ تم حذف الحساب بنجاح")));
+
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const RegisterView()),
+        (route) => false,
+      );
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _isDeletingAccount = false);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
     }
   }
 
@@ -65,8 +151,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
           Drawer(
             shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(25), // ✅ خلي الشمال مقفول
-                bottomLeft: Radius.circular(25), // ✅ الشمال مقفول
+                topLeft: Radius.circular(25),
+                bottomLeft: Radius.circular(25),
               ),
             ),
             child: FutureBuilder<String?>(
@@ -82,10 +168,9 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   padding: EdgeInsets.zero,
                   children: [
                     customDrawerHeader(),
-                    // 💡 تم تعديل هذا ListTile
                     ListTile(
                       leading: const Icon(
-                        Icons.settings,
+                        Icons.person_outline,
                         color: AppColors.primaryColor,
                       ),
                       title: const Text(
@@ -93,30 +178,44 @@ class _CustomDrawerState extends State<CustomDrawer> {
                         style: TextStyle(fontFamily: AppFonts.mainFont),
                       ),
                       onTap: () async {
-                        // 💡 استدعاء الدالة الجديدة
                         await _fetchAndNavigateToProfile(context);
                       },
                     ),
                     const Divider(height: 1),
                     ListTile(
                       leading: const Icon(
-                        Icons.person,
+                        Icons.lock_outline,
                         color: AppColors.primaryColor,
                       ),
                       title: const Text(
-                        'الإعدادات',
+                        'تغيير كلمة السر',
                         style: TextStyle(fontFamily: AppFonts.mainFont),
                       ),
                       onTap: () {
-                        // 💡 إغلاق الدرور قبل الانتقال
                         Navigator.of(context).pop();
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => SettingsView(),
+                            builder: (context) => const ChangePasswordView(),
                           ),
                         );
                       },
+                    ),
+                    const Divider(height: 1),
+                    ListTile(
+                      leading: Icon(
+                        Icons.delete_outline,
+                        color: Colors.red.shade700,
+                      ),
+                      title: Text(
+                        'حذف الحساب',
+                        style: TextStyle(
+                          fontFamily: AppFonts.mainFont,
+                          color: Colors.red.shade700,
+                        ),
+                      ),
+                      onTap: _isDeletingAccount ? null : _deleteAccount,
+                      // 💡 تم حذف مؤشر التحميل الصغير من هنا
                     ),
                     const Divider(height: 1),
 
@@ -131,7 +230,6 @@ class _CustomDrawerState extends State<CustomDrawer> {
                           style: TextStyle(fontFamily: AppFonts.mainFont),
                         ),
                         onTap: () {
-                          // 💡 إغلاق الدرور قبل الانتقال
                           Navigator.of(context).pop();
                           Navigator.push(
                             context,
@@ -150,10 +248,10 @@ class _CustomDrawerState extends State<CustomDrawer> {
               },
             ),
           ),
-          // 💡 إضافة مؤشر التحميل فوق الدرور
-          if (_isLoadingProfile)
+          // 💡 مؤشر التحميل الرئيسي عند أي عملية تحميل
+          if (_isLoadingProfile || _isDeletingAccount)
             const ModalBarrier(dismissible: false, color: Colors.black54),
-          if (_isLoadingProfile)
+          if (_isLoadingProfile || _isDeletingAccount)
             const Center(child: CircularProgressIndicator()),
         ],
       ),
@@ -255,49 +353,120 @@ ListTile logoutTile(BuildContext context) {
     onTap: () {
       showDialog(
         context: context,
-        builder:
-            (dialogContext) => AlertDialog(
-              title: const Text("تأكيد"),
-              content: const Text("هل أنت متأكد أنك تريد تسجيل الخروج؟"),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(dialogContext); // يقفل الـ dialog
-                  },
-                  child: const Text("إلغاء"),
-                ),
-                TextButton(
-                  onPressed: () async {
-                    Navigator.pop(dialogContext); // يقفل الـ dialog
+        builder: (dialogContext) {
+          bool _isLoading = false;
+          return StatefulBuilder(
+            builder: (context, setState) {
+              return Directionality(
+                textDirection: TextDirection.rtl,
+                child: AlertDialog(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  title: Text(
+                    "تأكيد",
+                    style: TextStyle(
+                      fontFamily: AppFonts.mainFont,
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.primaryColor,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  content: Text(
+                    "هل أنت متأكد أنك تريد تسجيل الخروج؟",
+                    style: TextStyle(
+                      fontFamily: AppFonts.mainFont,
+                      fontSize: 16,
+                      color: Colors.black87,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  actionsAlignment: MainAxisAlignment.center,
+                  actions: [
+                    TextButton(
+                      onPressed:
+                          _isLoading
+                              ? null
+                              : () {
+                                Navigator.pop(dialogContext);
+                              },
+                      child: Text(
+                        "إلغاء",
+                        style: TextStyle(
+                          fontFamily: AppFonts.mainFont,
+                          color: AppColors.primaryColor.withOpacity(0.7),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primaryColor,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      // 💡 هنا يتم التحكم في حالة الزر
+                      onPressed:
+                          _isLoading
+                              ? null
+                              : () async {
+                                setState(() {
+                                  _isLoading = true;
+                                });
 
-                    try {
-                      await LogoutService().logout();
-                      await StorageService().logout();
-                      RefreshTokenService().stopAutoRefresh();
+                                try {
+                                  await LogoutService().logout();
+                                  await StorageService().logout();
+                                  RefreshTokenService().stopAutoRefresh();
 
-                      // ✅ امسح أي شاشات سابقة ورجع للـ RegisterView
-                      Future.microtask(() {
-                        Navigator.of(
-                          context,
-                          rootNavigator: true,
-                        ).pushAndRemoveUntil(
-                          MaterialPageRoute(
-                            builder: (_) => const RegisterView(),
-                          ),
-                          (route) => false,
-                        );
-                      });
-                    } catch (e) {
-                      if (!context.mounted) return;
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("❌ فشل تسجيل الخروج: $e")),
-                      );
-                    }
-                  },
-                  child: const Text("نعم"),
+                                  if (context.mounted) {
+                                    Navigator.of(
+                                      context,
+                                      rootNavigator: true,
+                                    ).pushAndRemoveUntil(
+                                      MaterialPageRoute(
+                                        builder: (_) => const RegisterView(),
+                                      ),
+                                      (route) => false,
+                                    );
+                                  }
+                                } catch (e) {
+                                  if (!context.mounted) return;
+                                  Navigator.pop(
+                                    dialogContext,
+                                  ); // أغلق الديالوج حتى يرى المستخدم رسالة الخطأ
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text("❌ فشل تسجيل الخروج: $e"),
+                                    ),
+                                  );
+                                }
+                              },
+                      // 💡 هنا يتم تبديل محتوى الزر بين النص ومؤشر التحميل
+                      child:
+                          _isLoading
+                              ? const SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  color: AppColors.whiteColor,
+                                  strokeWidth: 2,
+                                ),
+                              )
+                              : const Text(
+                                "نعم",
+                                style: TextStyle(fontFamily: AppFonts.mainFont),
+                              ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              );
+            },
+          );
+        },
       );
     },
   );

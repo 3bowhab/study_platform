@@ -1,5 +1,4 @@
 // ignore_for_file: prefer_final_fields
-
 import 'package:flutter/material.dart';
 import 'package:study_platform/helper/app_colors_fonts.dart';
 import 'package:study_platform/models/student_models/course_model.dart';
@@ -265,7 +264,7 @@ class _StudentCoursesViewState extends State<StudentCoursesView> {
                                                     BorderRadius.circular(20),
                                               ),
                                               child: Text(
-                                                "${c.price!.toStringAsFixed(2)} جنيه",
+                                                "\$${c.price!.toStringAsFixed(2)}",
                                                 style: TextStyle(
                                                   fontFamily: AppFonts.mainFont,
                                                   color: Colors.white,
