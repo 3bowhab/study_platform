@@ -281,64 +281,78 @@ ListTile logoutWithoutService(BuildContext context) {
   );
 }
 
-DrawerHeader customDrawerHeader() {
-  return DrawerHeader(
-    decoration: const BoxDecoration(
-      gradient: LinearGradient(
-        colors: [AppColors.primaryColor, AppColors.gradientColor],
-        begin: Alignment.topRight,
-        end: Alignment.bottomLeft,
+// 💡 تم تعديل هذه الوظيفة
+Widget customDrawerHeader() {
+  return GestureDetector(
+    onTap: () async {
+      final token = await StorageService().getAccessToken();
+      if (token != null) {
+        print("Token: $token");
+      } else {
+        print("No token found.");
+      }
+    },
+    child: DrawerHeader(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          colors: [AppColors.primaryColor, AppColors.gradientColor],
+          begin: Alignment.topRight,
+          end: Alignment.bottomLeft,
+        ),
       ),
-    ),
-    child: FutureBuilder(
-      future: Future.wait([
-        StorageService().getFullName(),
-        StorageService().getEmail(),
-      ]),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(color: Colors.white),
-          );
-        }
-        final fullName = snapshot.data?[0] ?? "Guest";
-        final email = snapshot.data?[1] ?? "No Email";
+      child: FutureBuilder(
+        future: Future.wait([
+          StorageService().getFullName(),
+          StorageService().getEmail(),
+        ]),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(color: Colors.white),
+            );
+          }
+          final fullName = snapshot.data?[0] ?? "Guest";
+          final email = snapshot.data?[1] ?? "No Email";
 
-        return Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            // ✅ صورة بروفايل افتراضية
-            // const CircleAvatar(
-            //   radius: 30,
-            //   backgroundColor: Colors.white,
-            //   child: Icon(Icons.person, size: 40, color: Colors.grey),
-            // ),
-            // const SizedBox(width: 15),
-            // ✅ الاسم والإيميل
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    fullName,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // ✅ صورة بروفايل افتراضية
+              // const CircleAvatar(
+              //   radius: 30,
+              //   backgroundColor: Colors.white,
+              //   child: Icon(Icons.person, size: 40, color: Colors.grey),
+              // ),
+              // const SizedBox(width: 15),
+              // ✅ الاسم والإيميل
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      fullName,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 5),
-                  Text(
-                    email,
-                    style: const TextStyle(color: Colors.white70, fontSize: 14),
-                  ),
-                ],
+                    const SizedBox(height: 5),
+                    Text(
+                      email,
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
-        );
-      },
+            ],
+          );
+        },
+      ),
     ),
   );
 }
@@ -471,3 +485,5 @@ ListTile logoutTile(BuildContext context) {
     },
   );
 }
+
+// getAccessToken

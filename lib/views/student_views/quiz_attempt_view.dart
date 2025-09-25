@@ -232,7 +232,7 @@ class _QuizAttemptViewState extends State<QuizAttemptView> {
                   ),
                   const SizedBox(height: 16),
                   _buildInfoRow(
-                    "✅ الإجابات الصحيحة",
+                    "✅ نقاطك",
                     "${result['correct_answers']}/${result['total_questions']}",
                   ),
                   _buildInfoRow(
@@ -517,3 +517,4 @@ class _QuizAttemptViewState extends State<QuizAttemptView> {
     );
   }
 }
+// نقاطك

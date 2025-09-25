@@ -107,7 +107,7 @@ class _ConfirmEmailViewState extends State<ConfirmEmailView> {
                               ),
                             ),
                           ),
-                        )
+                        ),
                       ],
                     ),
                   ),
@@ -171,11 +171,14 @@ class _ConfirmEmailViewState extends State<ConfirmEmailView> {
         if (formkey.currentState!.validate()) {
           formkey.currentState!.save();
 
+          // ✅ أظهر علامة التحميل هنا
+          if (!mounted) return;
+          setState(() => isLoading = true);
+
           try {
-            String response = await RegisterService().confirmEmail(otp!);
+            await RegisterService().confirmEmail(otp!);
 
-            setState(() => isLoading = false);
-
+            // ✅ لا تخفي التحميل هنا، بل في finally
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text("✅ Registration Successful")),
             );
@@ -205,17 +208,18 @@ class _ConfirmEmailViewState extends State<ConfirmEmailView> {
               MaterialPageRoute(builder: (_) => dashboardPage),
               (route) => false,
             );
-
-            print("Response: $response");
           } catch (e) {
-            setState(() => isLoading = false);
-
+            if (!mounted) return;
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text("❌ Error: $e"),
                 duration: const Duration(seconds: 15),
               ),
             );
+          } finally {
+            // ✅ أخفي علامة التحميل دائمًا هنا
+            if (!mounted) return;
+            setState(() => isLoading = false);
           }
         } else {
           setState(() => autovalidateMode = AutovalidateMode.always);
@@ -231,27 +235,31 @@ class _ConfirmEmailViewState extends State<ConfirmEmailView> {
   TextButton resendButton(BuildContext context) {
     return TextButton(
       onPressed: () async {
+        // ✅ أظهر علامة التحميل هنا
+        if (!mounted) return;
         setState(() => isLoading = true);
 
         try {
           await ResendVerificationEmailService().resendVerificationEmail();
 
-          setState(() => isLoading = false);
-
+          // ✅ لا تخفي التحميل هنا، بل في finally
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text("📩 Verification email sent successfully"),
             ),
           );
         } catch (e) {
-          setState(() => isLoading = false);
-
+          if (!mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text("❌ Error: $e"),
               duration: const Duration(seconds: 15),
             ),
           );
+        } finally {
+          // ✅ أخفي علامة التحميل دائمًا هنا
+          if (!mounted) return;
+          setState(() => isLoading = false);
         }
       },
       child: const Text(

@@ -22,7 +22,6 @@ class GradientAppBar extends StatelessWidget implements PreferredSizeWidget {
       elevation: 0,
       centerTitle: centerTitle,
       iconTheme: const IconThemeData(color: AppColors.whiteColor),
-      // ❌ شيلنا leading
       title: Text(
         title,
         style: const TextStyle(
